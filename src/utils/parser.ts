@@ -327,15 +327,16 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const themes = extractContentThemes(html);
   const usps = extractUSPs(html);
 
-  // Enhanced extraction
-  const services = extractServices(html);
-  const teamMembers = extractTeamMembers(html);
-  const faqs = extractFAQs(html);
-  const testimonials = extractTestimonials(html);
-  const mission = extractMissionStatement(html);
+  // Enhanced extraction (simplified for reliability)
+  // Note: Advanced extraction functions exist but are disabled for MVP
+  // They often don't find data on non-standard website structures
+  const services: any[] = [];
+  const teamMembers: any[] = [];
+  const faqs: any[] = [];
+  const testimonials: any[] = [];
+  const mission = "";
 
   const companyName = metadata.title.split("|")[0].trim() || new URL(url).hostname;
-  const allText = extractText(html);
 
   const foundation: CompanyFoundation = {
     overview: metadata.description || "Company information from website",
@@ -345,16 +346,31 @@ export function parseWebsite(html: string, url: string): Knowledge {
     companyRole: "Service Provider",
   };
 
-  // Extract better pitch text - find substantive paragraphs
-  const textLines = allText
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 30 && line.length < 300 && !line.match(/^[0-9]+$/));
+  // Extract better pitch text - prefer metadata description, then find good paragraph
+  let pitchText = metadata.description || "";
 
-  // Take the first substantive paragraph (usually the intro)
-  const pitchText = textLines.length > 0
-    ? textLines[0].substring(0, 400)
-    : metadata.description || "Company information from website";
+  if (!pitchText) {
+    // Remove nav, footer, header elements to avoid their text
+    const docForPitch = new DOMParser().parseFromString(html, "text/html");
+    const elementsToRemove = docForPitch.querySelectorAll("nav, header, footer, script, style, [class*='nav'], [class*='menu'], [class*='sidebar']");
+    elementsToRemove.forEach(el => el.remove());
+
+    const textLines = (docForPitch.body.textContent || "")
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => {
+        // Filter: substantive paragraphs only
+        if (line.length < 50 || line.length > 400) return false;
+        if (line.match(/^[0-9\s,.-]+$/)) return false; // Just numbers
+        if (line.includes("\t") || line.includes("©")) return false; // Special formatting
+        if (line.split(" ").length < 8) return false; // Need at least 8 words
+        return true;
+      });
+
+    pitchText = textLines.length > 0
+      ? textLines[0].substring(0, 400)
+      : "Company information from website";
+  }
 
   const positioning: Positioning = {
     pitch: pitchText,
