@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///home/andre/MoFloBuilderChallenge/src/app/page.tsx"],"sourcesContent":["export default function Home() {\n  return (\n    <div className=\"text-center py-12\">\n      <h2 className=\"text-4xl font-bold text-gray-900 mb-4\">\n        Welcome to MoKnowledge\n      </h2>\n      <p className=\"text-lg text-gray-600 mb-8\">\n        Build comprehensive company knowledge bases from website scraping\n      </p>\n      <div className=\"flex gap-4 justify-center\">\n        <a\n          href=\"/knowledge\"\n          className=\"bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700\"\n        >\n          Start Building\n        </a>\n        <a\n          href=\"/knowledge/view\"\n          className=\"bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-300\"\n        >\n          View Knowledge Bases\n        </a>\n      </div>\n    </div>\n  );\n}\n"],"names":["Home","className","href"],"mappings":";;;;;;AAAe,SAASA;IACtB,qBACE,8OAAC;QAAIC,WAAU;;0BACb,8OAAC;gBAAGA,WAAU;0BAAwC;;;;;;0BAGtD,8OAAC;gBAAEA,WAAU;0BAA6B;;;;;;0BAG1C,8OAAC;gBAAIA,WAAU;;kCACb,8OAAC;wBACCC,MAAK;wBACLD,WAAU;kCACX;;;;;;kCAGD,8OAAC;wBACCC,MAAK;wBACLD,WAAU;kCACX;;;;;;;;;;;;;;;;;;AAMT"}}]
+}

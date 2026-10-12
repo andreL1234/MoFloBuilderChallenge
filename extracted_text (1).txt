@@ -1,0 +1,249 @@
+SMB Knowledge Activity Instructions
+Introduction
+Congratulations on advancing to the next stage of the interview process. We’re excited to see
+how you will approach building. This assignment will test your ability to understand system
+architecture, follow pre-existing practices, and create meaningful functionality that aligns with
+the mission of MoFlo.
+
+About MoFlo Cloud
+MoFlo Cloud is a comprehensive business automation platform that provides AI-powered tools
+for various business functions. All of our customers are small businesses that are very much
+non-technical and are not great with complex interfaces or learning new technologies. We aim
+to do as much for them as possible rather than making them do everything within our platform.
+Applications are the core products inside MoFlo Cloud. Each app has a specific function (e.g.,
+social posts, emails, blogs), and a specific connection point (to external platforms to push
+content, integrate accounts, track results, etc.)
+Our platform currently includes (with some examples of function + connection):
+●​ MoSocial
+○​ Function: Social media content generation (captions, hashtags, images)
+○​ Connection: X, LinkedIn, Facebook, Instagram, Youtube, TikTok
+●​ MoMail
+○​ Function: Email content generation (outbound emails, newsletters, etc.)
+○​ Connection: Mail Chimp, Constant Contact, etc.
+●​ MoBlogs
+○​ Function: Blog content generation (blogs, case studies, articles, etc.)
+
+○​ Connection: Wordpress, Wix, Framer,, etc.
+All of our apps rely on a company knowledge base that we build for each business when they
+sign up for MoFlo Cloud. This knowledge base is the foundation that allows every application to
+generate tailored, on-brand content. The quality of the knowledge base directly determines the
+quality of everything MoFlo produces.
+
+Your Assignment: The Knowledge Builder
+You will build your own version of our Knowledge, a web-based tool that scrapes a company's
+website and transforms the extracted data into a structured, comprehensive knowledge base.
+This is one of the most critical pieces of the MoFlo platform. When a new customer signs up, we
+need to understand their business deeply and quickly. Your challenge is to build the system
+that makes that happen.
+
+What You're Building
+A functional web application where a user can:
+1.​ Input a company website URL
+2.​ Scrape that website to extract meaningful business information
+3.​ Display the scraped results in a structured, reviewable format
+4.​ Allow the user to review, edit, and enhance the extracted knowledge
+5.​ Save the final knowledge base as a structured JSON output
+
+The Knowledge Base Standard
+Attached to this assignment is a PDF (Knowledge_Outputs.pdf) containing example
+knowledge base profiles for several real companies. These examples represent the minimum
+standard for the type of information we currently extract. Your scraper and output structure
+should cover at least the following categories:
+Company Foundation
+●​ Overview / company description
+
+●​ Website, industry, business model, company role
+●​ Year founded, legal entity type, employee count
+●​ Main address, other locations, service locations
+●​ Alternative company names
+Positioning
+●​ Company pitch (a compelling summary of why a customer should choose them)
+●​ Founding story (if available)
+Market & Customers
+●​ Target buyers
+●​ Customer needs
+●​ Ideal customer persona
+●​ Industry groupings
+●​ Industry outlook (if available)
+●​ Channels, funnels, CTAs
+●​ Suppliers / partners
+Branding & Style
+●​ Writing style description (tone, voice, language patterns)
+●​ Art style description
+●​ Fonts
+●​ Brand colors (hex values)
+●​ Logos (URLs)
+Online Presence
+●​ Social media links (LinkedIn, Facebook, Instagram, Twitter/X, etc.)
+Key People
+●​ Names, titles, roles, gender
+●​ Brief descriptions of their background or relevance
+Offerings
+
+●​ Products and/or services
+●​ Features of each offering
+●​ Pricing information (if available)
+●​ Categorization of offering types
+
+Think Bigger
+The categories above are our current baseline. A major part of this challenge is demonstrating
+that you can think beyond the baseline.
+Consider: if MoSocial needs to write social posts, MoMail needs to write emails, and MoBlogs
+needs to write articles, what additional information would make those outputs better? What
+else could you extract from a website that would be valuable across all of our applications?
+Some directions to consider (these are prompts, not requirements):
+●​ Competitor information or market positioning signals
+●​ Content themes or topics the company frequently discusses
+●​ Testimonials, reviews, or social proof
+●​ Certifications, awards, or trust signals
+●​ FAQ content or common customer questions
+●​ Calls-to-action patterns and conversion language
+●​ Unique selling propositions or differentiators
+●​ Seasonal or time-sensitive messaging patterns
+●​ Legal or compliance language (privacy policies, disclaimers)
+●​ Media mentions or press coverage
+●​ Community involvement or values-driven messaging
+The best submissions will demonstrate original thinking about what makes a knowledge
+base truly useful for AI-powered content generation.
+
+Technical Requirements
+Architecture & Tech Stack
+●​ Framework: Next.js 15 with App Router
+
+●​ Language: TypeScript
+●​ Styling: Tailwind CSS
+●​ State Management: React hooks and context
+●​ UI Components: Clean, professional interface (visually match our platform where
+possible)
+
+Required Features
+Scrape & Build Page (/knowledge)
+This is your main page. It should include:
+●​ URL input where the user enters a company website
+●​ Scrape trigger that initiates the website scraping process
+●​ A loading/progress state while scraping is in progress
+●​ Structured display of results organized by knowledge base categories
+●​ The ability for the user to review and edit the extracted information before saving
+●​ A save button that converts the final knowledge base into a JSON structure
+●​ Form validation and error handling
+Important notes on scraping:
+●​ You should build a real scraper that fetches and parses website content. This is a core
+part of the challenge.
+●​ You do NOT need to call any LLM APIs. If you want to demonstrate how AI would
+enhance the extracted data (e.g., generating a company pitch from raw content), use
+placeholder/mock outputs and clearly label them.
+●​ Focus on extracting as much structured information as possible from the raw HTML,
+metadata, and page content.
+View/Manage Page (/knowledge/view)
+This page shows knowledge bases that have been created. It should include:
+●​ Display of saved knowledge base entries (from your JSON output)
+●​ Multiple view modes (e.g., card view, table view, detailed view) that work well with the
+content structure
+
+●​ Filtering and/or search functionality
+●​ Edit and delete functionality
+●​ Any additional utilities that make sense for managing knowledge base records
+
+Additional Requirements
+●​ Responsive design
+●​ Error handling throughout
+●​ TypeScript with proper type definitions
+●​ Clean file organization (components, utilities, types, etc.)
+●​ A .txt or .json file containing the JSON output from your scrape/build page (at least
+one complete example)
+●​ A database schema design for storing the knowledge base data (documented in your
+README or as a separate file)
+
+Prompting & AI Thinking (Evaluated)
+Even though you are not required to integrate a live LLM, we are evaluating your prompting
+skills and AI thinking. Specifically:
+1.​ Prompt Design: If your application were to pass scraped content to an LLM for
+enrichment, what would those prompts look like? Include at least 2-3 example prompts
+in your codebase or documentation that demonstrate how you would instruct an AI to
+transform raw scraped data into structured knowledge base fields. These can be in a
+dedicated /prompts directory, in your README, or as constants in your code.
+2.​ Data Quality Thinking: How would you handle incomplete data? What fallback
+strategies would you use when a website doesn't have certain information? Document
+your approach.
+3.​ Knowledge Enrichment Ideas: Beyond what's on the website itself, what other data
+sources or enrichment strategies could improve a knowledge base? Include your ideas
+in your documentation.
+
+Questions (Required)
+Include a text file with answers to the following:
+1.​ What approach did you take to scraping and structuring the knowledge base data?
+2.​ What information beyond our current baseline did you choose to include, and why?
+3.​ How would your knowledge base design improve the outputs of MoSocial, MoMail, and
+MoBlogs specifically?
+4.​ What would you improve or change about MoKnowledge if you had more time?
+5.​ What was the most challenging part of this assignment?
+
+Submission Requirements
+Submit your project as a link to a GitHub repository with:
+1.​ Complete source code with organized file structure
+2.​ README explaining:
+○​ What MoKnowledge does
+○​ How to set it up and run it
+○​ Key features and functionality
+○​ Your approach to scraping and data extraction
+○​ Your knowledge base schema design
+○​ Example prompts for AI enrichment
+○​ Any assumptions or limitations
+3.​ Screenshots showing the app in action
+4.​ JSON output file containing at least one complete knowledge base example from your
+scraper
+5.​ Answers file with responses to the required questions
+
+Bonus Challenge
+Design a Supabase database structure for the knowledge base system. Include:
+●​ Table schemas with column types
+
+●​ Relationships between tables
+●​ Row Level Security (RLS) policy considerations
+●​ How the schema would support multiple companies and versioning of knowledge base
+entries
+
+Evaluation Criteria
+Area
+Scraping
+
+What We're Evaluating
+Can you extract meaningful, structured data from a real website?
+
+Quality
+Knowledge
+
+Does your knowledge base structure go beyond the baseline? Is it
+
+Design
+
+thoughtful and comprehensive?
+
+Prompting
+
+Do your example prompts demonstrate an understanding of how to get
+
+Skills
+
+high-quality outputs from an LLM?
+
+Technical
+
+Is the code clean, typed, well-organized, and functional?
+
+Execution
+Product
+
+Does your solution demonstrate an understanding of how knowledge
+
+Thinking
+
+powers content generation across multiple applications?
+
+UI/UX
+
+Is the interface intuitive and professional?
+
+Good luck. We're excited to see what you build.
+
+

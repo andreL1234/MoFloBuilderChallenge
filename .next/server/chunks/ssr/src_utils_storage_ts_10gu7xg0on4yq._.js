@@ -1,0 +1,3 @@
+module.exports=[79744,a=>{"use strict";a.s(["f",0,function(a){let b=new Blob([JSON.stringify(a,null,2)],{type:"application/json"}),c=URL.createObjectURL(b),d=document.createElement("a");d.href=c,d.download=`${a.companyName.replace(/\s+/g,"_")}_knowledge.json`,document.body.appendChild(d),d.click(),document.body.removeChild(d),URL.revokeObjectURL(c)}])}];
+
+//# sourceMappingURL=src_utils_storage_ts_10gu7xg0on4yq._.js.map
