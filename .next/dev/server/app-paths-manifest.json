@@ -1,4 +1,5 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/scrape/route": "app/api/scrape/route.js",
   "/knowledge/page": "app/knowledge/page.js",
   "/knowledge/view/page": "app/knowledge/view/page.js",

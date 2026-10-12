@@ -46,11 +46,37 @@ export default function KnowledgeDisplay({
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Industry</dt>
-              <dd className="text-gray-900">{knowledge.foundation.industry}</dd>
+              <dd className="text-gray-900 flex items-center gap-2">
+                {knowledge.foundation.industry}
+                {knowledge.foundation.industryConfidence !== undefined && (
+                  <span className={`text-xs px-2 py-0.5 rounded ${
+                    knowledge.foundation.industryConfidence >= 0.75
+                      ? "bg-green-100 text-green-700"
+                      : knowledge.foundation.industryConfidence >= 0.5
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}>
+                    {Math.round(knowledge.foundation.industryConfidence * 100)}%
+                  </span>
+                )}
+              </dd>
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Business Model</dt>
-              <dd className="text-gray-900">{knowledge.foundation.businessModel}</dd>
+              <dd className="text-gray-900 flex items-center gap-2">
+                {knowledge.foundation.businessModel}
+                {knowledge.foundation.businessModelConfidence !== undefined && (
+                  <span className={`text-xs px-2 py-0.5 rounded ${
+                    knowledge.foundation.businessModelConfidence >= 0.75
+                      ? "bg-green-100 text-green-700"
+                      : knowledge.foundation.businessModelConfidence >= 0.5
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}>
+                    {Math.round(knowledge.foundation.businessModelConfidence * 100)}%
+                  </span>
+                )}
+              </dd>
             </div>
             {knowledge.foundation.yearFounded && (
               <div>
@@ -170,7 +196,13 @@ export default function KnowledgeDisplay({
 
       <div className="mt-6 p-4 bg-gray-50 rounded-lg">
         <p className="text-xs text-gray-600">
-          <strong>Confidence Score:</strong> {((knowledge.confidenceScore || 0) * 100).toFixed(0)}% •
+          <strong>Confidence Score:</strong> {
+            (() => {
+              const score = knowledge.confidenceScore || 0;
+              const normalized = typeof score === 'number' && score > 1 ? score / 100 : score;
+              return `${(Math.max(0, Math.min(1, normalized)) * 100).toFixed(0)}%`;
+            })()
+          } •
           <strong className="ml-2">Scraped:</strong> {new Date(knowledge.scrapedAt).toLocaleString()}
         </p>
       </div>

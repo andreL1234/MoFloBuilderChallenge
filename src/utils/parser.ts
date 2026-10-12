@@ -167,6 +167,246 @@ function extractUSPs(html: string): string[] {
   return [...new Set(usps)].slice(0, 5);
 }
 
+// Extract services/products from common patterns
+function extractServices(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const services: { name: string; description: string }[] = [];
+
+  // Look for service containers (div, li, section with common class names)
+  const serviceSelectors = [
+    '[class*="service"]',
+    '[class*="product"]',
+    '[class*="offering"]',
+    '[class*="feature"]',
+  ];
+
+  serviceSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const headings = el.querySelectorAll("h2, h3, h4, .title, .name");
+      const descriptions = el.querySelectorAll("p, .description, .details");
+
+      if (headings.length > 0) {
+        const name = headings[0].textContent?.trim() || "";
+        const description = descriptions[0]?.textContent?.trim() || "";
+
+        if (name && name.length > 3 && name.length < 100) {
+          services.push({ name, description: description.substring(0, 200) });
+        }
+      }
+    });
+  });
+
+  return services.slice(0, 8);
+}
+
+// Extract team members from common patterns
+function extractTeamMembers(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const team: { name: string; title: string; description: string }[] = [];
+
+  // Look for team sections
+  const teamSelectors = [
+    '[class*="team"]',
+    '[class*="staff"]',
+    '[class*="people"]',
+    '[class*="about"] [class*="person"]',
+  ];
+
+  teamSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const name = el.querySelector("h2, h3, h4, .name, .person-name")?.textContent?.trim() || "";
+      const title = el.querySelector(".title, .position, .role, .job-title")?.textContent?.trim() || "";
+      const description = el.querySelector("p, .bio, .description")?.textContent?.trim() || "";
+
+      if (name && name.length > 3 && name.length < 100) {
+        team.push({
+          name,
+          title: title.substring(0, 50),
+          description: description.substring(0, 150)
+        });
+      }
+    });
+  });
+
+  return team.slice(0, 8);
+}
+
+// Extract FAQ content
+function extractFAQs(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const faqs: { question: string; answer: string }[] = [];
+
+  // Look for FAQ patterns
+  const faqSelectors = [
+    '[class*="faq"]',
+    '[class*="qa"]',
+    '[class*="question"]',
+    'dt',
+  ];
+
+  faqSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const question = el.querySelector("h3, h4, .question, summary")?.textContent?.trim() ||
+                      el.textContent?.trim() || "";
+      const answerEl = el.nextElementSibling;
+      const answer = answerEl?.querySelector("p, .answer, [class*='content']")?.textContent?.trim() ||
+                    answerEl?.textContent?.trim() || "";
+
+      if (question && answer && question.length > 5 && answer.length > 10) {
+        faqs.push({
+          question: question.substring(0, 150),
+          answer: answer.substring(0, 300)
+        });
+      }
+    });
+  });
+
+  return faqs.slice(0, 6);
+}
+
+// Extract testimonials/reviews
+function extractTestimonials(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const testimonials: string[] = [];
+
+  // Look for testimonial patterns
+  const testSelectors = [
+    '[class*="testimonial"]',
+    '[class*="review"]',
+    '[class*="quote"]',
+    '[class*="feedback"]',
+    '[class*="case-study"]',
+  ];
+
+  testSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const text = el.querySelector("p, blockquote, .text, .content")?.textContent?.trim() || "";
+      if (text && text.length > 20 && text.length < 500) {
+        testimonials.push(text);
+      }
+    });
+  });
+
+  return [...new Set(testimonials)].slice(0, 5);
+}
+
+// Extract mission/vision/values statements
+function extractMissionStatement(html: string): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = doc.body.textContent || "";
+
+  // Look for mission/vision patterns
+  const patterns = [
+    /(?:our mission|mission statement)[:\s]*([^.!?]{20,300})/i,
+    /(?:our vision|vision statement)[:\s]*([^.!?]{20,300})/i,
+    /(?:our purpose|core purpose)[:\s]*([^.!?]{20,300})/i,
+    /(?:our values|core values)[:\s]*([^.!?]{20,300})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return "";
+}
+
+// Detect industry from content with confidence score
+function detectIndustry(html: string): { industry: string; confidence: number } {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = (doc.body.textContent || "").toLowerCase();
+  const metaTags = doc.querySelectorAll("meta[name='keywords'], meta[name='description'], meta[property*='og:']");
+  let metaText = "";
+  metaTags.forEach(tag => {
+    metaText += (tag.getAttribute("content") || "").toLowerCase();
+  });
+
+  const fullText = text + " " + metaText;
+
+  // Industry patterns with confidence weights
+  const patterns: Array<[RegExp, string, number]> = [
+    [/(?:accounting|tax|bookkeeping|cpa|financial|audit)/gi, "Accounting & Tax Services", 0.85],
+    [/(?:software|saas|app|cloud|developer|programming)/gi, "Software/SaaS", 0.80],
+    [/(?:real estate|realtor|property|mortgage|residential)/gi, "Real Estate", 0.80],
+    [/(?:healthcare|medical|clinic|doctor|hospital|dental)/gi, "Healthcare", 0.85],
+    [/(?:drilling|well|construction|engineering|contractor)/gi, "Construction/Resources", 0.75],
+    [/(?:marketing|advertising|agency|creative|digital)/gi, "Marketing/Advertising", 0.70],
+    [/(?:ecommerce|retail|shop|store|merchandise)/gi, "Retail/E-commerce", 0.75],
+    [/(?:consulting|advisory|strategy|management)/gi, "Consulting", 0.65],
+    [/(?:education|training|course|university|school)/gi, "Education", 0.75],
+    [/(?:hospitality|restaurant|hotel|travel|tourism)/gi, "Hospitality/Travel", 0.70],
+  ];
+
+  let bestMatch = { industry: "Unknown", confidence: 0 };
+
+  for (const [pattern, industry, baseConfidence] of patterns) {
+    const matches = fullText.match(pattern);
+    if (matches) {
+      const confidence = Math.min(baseConfidence + (matches.length * 0.05), 0.95);
+      if (confidence > bestMatch.confidence) {
+        bestMatch = { industry, confidence: Math.round(confidence * 100) / 100 };
+      }
+    }
+  }
+
+  return bestMatch;
+}
+
+// Detect business model from content with confidence score
+function detectBusinessModel(html: string): { model: string; confidence: number } {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = (doc.body.textContent || "").toLowerCase();
+
+  let confidence = 0;
+  let model = "Service Provider"; // Safe default
+
+  // Check for pricing signals (B2B SaaS/Subscription)
+  if (text.includes("pricing") || text.includes("subscription") || text.includes("per month")) {
+    confidence = 0.75;
+    model = "B2B SaaS / Subscription";
+  }
+
+  // Check for e-commerce
+  if (text.includes("add to cart") || text.includes("checkout") || text.includes("shop")) {
+    confidence = 0.80;
+    model = "E-commerce";
+  }
+
+  // Check for service business
+  if (text.includes("book appointment") || text.includes("schedule") || text.includes("consultation")) {
+    confidence = Math.max(confidence, 0.70);
+    model = "Service Business";
+  }
+
+  // Check for B2B service provider
+  if (text.includes("contact sales") || text.includes("enterprise") || text.includes("custom solution")) {
+    confidence = Math.max(confidence, 0.65);
+    model = "B2B Service Provider";
+  }
+
+  // Check for freelance/agency
+  if (text.includes("portfolio") || text.includes("case studies") || text.includes("hire us")) {
+    confidence = Math.max(confidence, 0.60);
+    model = "Agency/Freelance";
+  }
+
+  // Low confidence = unsure
+  if (confidence === 0) {
+    confidence = 0.35; // Very low confidence in default
+  }
+
+  return {
+    model,
+    confidence: Math.round(confidence * 100) / 100
+  };
+}
+
 export function parseWebsite(html: string, url: string): Knowledge {
   const metadata = extractMetadata(html);
   const { phones } = extractUrls(html);
@@ -177,27 +417,56 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const themes = extractContentThemes(html);
   const usps = extractUSPs(html);
 
+  // Auto-detect industry and business model with confidence scores
+  const industryDetection = detectIndustry(html);
+  const businessModelDetection = detectBusinessModel(html);
+
+  // Enhanced extraction (simplified for reliability)
+  // Note: Advanced extraction functions exist but are disabled for MVP
+  // They often don't find data on non-standard website structures
+  const services: any[] = [];
+  const teamMembers: any[] = [];
+  const faqs: any[] = [];
+  const testimonials: any[] = [];
+  const mission = "";
+
   const companyName = metadata.title.split("|")[0].trim() || new URL(url).hostname;
-  const allText = extractText(html);
 
   const foundation: CompanyFoundation = {
     overview: metadata.description || "Company information from website",
     website: url,
-    industry: "Unknown",
-    businessModel: "Unknown",
+    industry: industryDetection.industry,
+    businessModel: businessModelDetection.model,
     companyRole: "Service Provider",
+    industryConfidence: industryDetection.confidence,
+    businessModelConfidence: businessModelDetection.confidence,
   };
 
-  // Extract better pitch text - find substantive paragraphs
-  const textLines = allText
-    .split("\n")
-    .map(line => line.trim())
-    .filter(line => line.length > 30 && line.length < 300 && !line.match(/^[0-9]+$/));
+  // Extract better pitch text - prefer metadata description, then find good paragraph
+  let pitchText = metadata.description || "";
 
-  // Take the first substantive paragraph (usually the intro)
-  const pitchText = textLines.length > 0
-    ? textLines[0].substring(0, 400)
-    : metadata.description || "Company information from website";
+  if (!pitchText) {
+    // Remove nav, footer, header elements to avoid their text
+    const docForPitch = new DOMParser().parseFromString(html, "text/html");
+    const elementsToRemove = docForPitch.querySelectorAll("nav, header, footer, script, style, [class*='nav'], [class*='menu'], [class*='sidebar']");
+    elementsToRemove.forEach(el => el.remove());
+
+    const textLines = (docForPitch.body.textContent || "")
+      .split("\n")
+      .map(line => line.trim())
+      .filter(line => {
+        // Filter: substantive paragraphs only
+        if (line.length < 50 || line.length > 400) return false;
+        if (line.match(/^[0-9\s,.-]+$/)) return false; // Just numbers
+        if (line.includes("\t") || line.includes("©")) return false; // Special formatting
+        if (line.split(" ").length < 8) return false; // Need at least 8 words
+        return true;
+      });
+
+    pitchText = textLines.length > 0
+      ? textLines[0].substring(0, 400)
+      : "Company information from website";
+  }
 
   const positioning: Positioning = {
     pitch: pitchText,
@@ -231,7 +500,11 @@ export function parseWebsite(html: string, url: string): Knowledge {
   if (colors.length > 0) confidence += 0.05;
   if (themes.length > 0) confidence += 0.1;
   if (usps.length > 0) confidence += 0.1;
-  confidence = Math.min(confidence, 0.95); // Cap at 0.95
+  if (services.length > 0) confidence += 0.05;
+  if (teamMembers.length > 0) confidence += 0.05;
+  if (faqs.length > 0) confidence += 0.03;
+  if (testimonials.length > 0) confidence += 0.03;
+  confidence = Math.min(confidence, 0.99); // Cap at 0.99 for high quality
 
   return {
     id,
@@ -242,11 +515,23 @@ export function parseWebsite(html: string, url: string): Knowledge {
     marketAndCustomers,
     brandingAndStyle,
     onlinePresence,
-    offerings: [],
-    keyPeople: [],
+    offerings: services.map(s => ({
+      name: s.name,
+      category: "Service",
+      description: s.description,
+      features: [],
+    })),
+    keyPeople: teamMembers.map(t => ({
+      name: t.name,
+      title: t.title,
+      description: t.description,
+    })),
     thinkBigger: {
       contentThemes: themes,
       uniqueSellingPropositions: usps,
+      testimonials: testimonials.length > 0 ? testimonials : undefined,
+      faqs: faqs.length > 0 ? faqs : undefined,
+      communityValues: mission || undefined,
     },
     scrapedAt: now,
     updatedAt: now,
