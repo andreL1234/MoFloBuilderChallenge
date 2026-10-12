@@ -1,8 +1,13 @@
 import { Knowledge, CompanyFoundation, Positioning, MarketAndCustomers, BrandingAndStyle, OnlinePresence } from "@/types/knowledge";
 
-// Simple HTML text extraction
+// Simple HTML text extraction - removes script and style tags
 function extractText(html: string): string {
   const doc = new DOMParser().parseFromString(html, "text/html");
+
+  // Remove script and style tags to avoid extracting CSS/JS
+  const scripts = doc.querySelectorAll("script, style, meta, link, noscript");
+  scripts.forEach(script => script.remove());
+
   return doc.body.textContent || "";
 }
 
@@ -183,12 +188,19 @@ export function parseWebsite(html: string, url: string): Knowledge {
     companyRole: "Service Provider",
   };
 
-  // Extract better pitch text (remove first short lines which are often navigation)
-  const textLines = allText.split("\n").filter(line => line.trim().length > 20);
-  const pitchText = textLines.slice(0, 5).join(" ").substring(0, 400).trim();
+  // Extract better pitch text - find substantive paragraphs
+  const textLines = allText
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.length > 30 && line.length < 300 && !line.match(/^[0-9]+$/));
+
+  // Take the first substantive paragraph (usually the intro)
+  const pitchText = textLines.length > 0
+    ? textLines[0].substring(0, 400)
+    : metadata.description || "Company information from website";
 
   const positioning: Positioning = {
-    pitch: pitchText || "Company information from website",
+    pitch: pitchText,
   };
 
   const marketAndCustomers: MarketAndCustomers = {
