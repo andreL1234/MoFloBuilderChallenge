@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useKnowledge } from "@/context/KnowledgeContext";
 import KnowledgeForm from "@/components/KnowledgeForm";
 import KnowledgeDisplay from "@/components/KnowledgeDisplay";
@@ -11,11 +11,15 @@ type PageStep = "form" | "display" | "edit";
 
 export default function KnowledgePage() {
   const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
-  const [step, setStep] = useState<PageStep>(() => {
-    // If we have currentKnowledge (editing), start with display
-    // Otherwise start with form (creating new)
-    return currentKnowledge ? "display" : "form";
-  });
+  const [step, setStep] = useState<PageStep>("form");
+
+  // When currentKnowledge changes and we navigate here (from /view for editing),
+  // start with display step. Otherwise stay in form for new scrapes.
+  useEffect(() => {
+    if (currentKnowledge && step === "form") {
+      setStep("display");
+    }
+  }, [currentKnowledge]);
 
   const handleScraped = (knowledge: Knowledge) => {
     setCurrentKnowledge(knowledge);

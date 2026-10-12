@@ -128,3 +128,50 @@
 {"timestamp":"01:33:07.181","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
 {"timestamp":"01:35:35.225","source":"Server","level":"LOG","message":"✓ Compiled in 56ms"}
 {"timestamp":"01:35:46.498","source":"Server","level":"LOG","message":"✓ Compiled in 18ms"}
+{"timestamp":"01:36:26.434","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:36:26.574","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:36:26.574","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:36:26.579","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:21.153","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:21.273","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:21.273","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:21.273","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:24.190","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:24.317","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:24.317","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:24.317","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:30.496","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:31.436","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:31.503","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:31.503","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:31.510","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:32.216","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:32.336","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:32.337","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:32.337","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:33.649","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:33.818","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:33.818","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:33.844","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:34.468","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:34.639","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:34.639","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:34.651","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:35.407","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:35.558","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:35.558","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:35.573","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:36.083","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:36.225","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:36.225","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:36.237","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:44.405","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:46.188","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:46.313","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:46.313","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:46.313","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:41:48.330","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:41:48.373","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:48.373","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:41:48.373","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:42:27.536","source":"Server","level":"LOG","message":"✓ Compiled in 133ms"}
