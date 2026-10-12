@@ -61,22 +61,19 @@ function KnowledgeProvider({ children }) {
     const [knowledgeList, setKnowledgeList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [isHydrated, setIsHydrated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     // Load from localStorage on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        const stored = localStorage.getItem("knowledgeList");
-        if (stored) {
-            try {
-                setKnowledgeList(JSON.parse(stored));
-            } catch (err) {
-                console.error("Failed to load knowledge list from localStorage", err);
-            }
-        }
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
     }, []);
     // Save to localStorage when list changes
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
-        localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
+        if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
+        ;
     }, [
-        knowledgeList
+        knowledgeList,
+        isHydrated
     ]);
     const addKnowledge = (knowledge)=>{
         setKnowledgeList((prev)=>[
@@ -111,7 +108,7 @@ function KnowledgeProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/KnowledgeContext.tsx",
-        lineNumber: 72,
+        lineNumber: 87,
         columnNumber: 5
     }, this);
 }

@@ -1512,26 +1512,42 @@ function KnowledgeProvider({ children }) {
     const [knowledgeList, setKnowledgeList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [isHydrated, setIsHydrated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     // Load from localStorage on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "KnowledgeProvider.useEffect": ()=>{
-            const stored = localStorage.getItem("knowledgeList");
-            if (stored) {
-                try {
-                    setKnowledgeList(JSON.parse(stored));
-                } catch (err) {
-                    console.error("Failed to load knowledge list from localStorage", err);
+            if ("TURBOPACK compile-time truthy", 1) {
+                const stored = localStorage.getItem("knowledgeList");
+                if (stored) {
+                    try {
+                        const parsed = JSON.parse(stored);
+                        setKnowledgeList(parsed);
+                        console.log("Loaded knowledge list from localStorage:", parsed);
+                    } catch (err) {
+                        console.error("Failed to load knowledge list from localStorage", err);
+                    }
+                } else {
+                    console.log("No knowledge list found in localStorage");
                 }
+                setIsHydrated(true);
             }
         }
     }["KnowledgeProvider.useEffect"], []);
     // Save to localStorage when list changes
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "KnowledgeProvider.useEffect": ()=>{
-            localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
+            if (("TURBOPACK compile-time value", "object") !== "undefined" && isHydrated) {
+                try {
+                    localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
+                    console.log("Saved knowledge list to localStorage:", knowledgeList);
+                } catch (err) {
+                    console.error("Failed to save to localStorage:", err);
+                }
+            }
         }
     }["KnowledgeProvider.useEffect"], [
-        knowledgeList
+        knowledgeList,
+        isHydrated
     ]);
     const addKnowledge = (knowledge)=>{
         setKnowledgeList((prev)=>[
@@ -1566,11 +1582,11 @@ function KnowledgeProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/KnowledgeContext.tsx",
-        lineNumber: 72,
+        lineNumber: 87,
         columnNumber: 5
     }, this);
 }
-_s(KnowledgeProvider, "/EkmJju0qksY82xGCXmSmyRY3Tw=");
+_s(KnowledgeProvider, "VD6fibYfS8XAJCbBLvBKZctV900=");
 _c = KnowledgeProvider;
 function useKnowledge() {
     _s1();

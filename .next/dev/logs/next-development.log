@@ -1,2 +1,22 @@
 {"timestamp":"00:00:00.811","source":"Server","level":"LOG","message":""}
 {"timestamp":"00:00:02.521","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:01:28.638","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:01:30.394","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:02:11.753","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:02:13.451","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:02:27.393","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:02:44.400","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:03:25.359","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:03:28.650","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:04:16.440","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:05:05.214","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"00:05:05.238","source":"Server","level":"LOG","message":"✓ Compiled in 36ms"}
+{"timestamp":"00:05:05.748","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:05:05.877","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"00:05:05.878","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"00:05:13.108","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"00:05:13.172","source":"Server","level":"LOG","message":"✓ Compiled in 24ms"}
+{"timestamp":"00:05:13.621","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:05:13.767","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"00:05:13.767","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"00:05:13.769","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}

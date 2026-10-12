@@ -31,23 +31,38 @@ export function KnowledgeProvider({
   const [knowledgeList, setKnowledgeList] = useState<Knowledge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem("knowledgeList");
-    if (stored) {
-      try {
-        setKnowledgeList(JSON.parse(stored));
-      } catch (err) {
-        console.error("Failed to load knowledge list from localStorage", err);
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("knowledgeList");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setKnowledgeList(parsed);
+          console.log("Loaded knowledge list from localStorage:", parsed);
+        } catch (err) {
+          console.error("Failed to load knowledge list from localStorage", err);
+        }
+      } else {
+        console.log("No knowledge list found in localStorage");
       }
+      setIsHydrated(true);
     }
   }, []);
 
   // Save to localStorage when list changes
   useEffect(() => {
-    localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
-  }, [knowledgeList]);
+    if (typeof window !== "undefined" && isHydrated) {
+      try {
+        localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
+        console.log("Saved knowledge list to localStorage:", knowledgeList);
+      } catch (err) {
+        console.error("Failed to save to localStorage:", err);
+      }
+    }
+  }, [knowledgeList, isHydrated]);
 
   const addKnowledge = (knowledge: Knowledge) => {
     setKnowledgeList((prev) => [...prev, knowledge]);
