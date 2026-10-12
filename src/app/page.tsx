@@ -2,13 +2,13 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 opacity-5 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 opacity-5 pointer-events-none" />
 
       <div className="text-center max-w-2xl mx-auto relative z-10">
         {/* Badge */}
         <div className="inline-block mb-6">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-100 text-accent-700 text-sm font-medium">
-            <span className="w-2 h-2 bg-accent-600 rounded-full animate-pulse" />
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-100 text-cyan-700 text-sm font-medium">
+            <span className="w-2 h-2 bg-cyan-600 rounded-full animate-pulse" />
             Powered by MoFlo
           </span>
         </div>
@@ -27,7 +27,7 @@ export default function Home() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <a
             href="/knowledge"
-            className="inline-flex items-center justify-center px-8 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg"
+            className="inline-flex items-center justify-center px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
           >
             Start Building
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,7 +36,7 @@ export default function Home() {
           </a>
           <a
             href="/knowledge/view"
-            className="inline-flex items-center justify-center px-8 py-3 bg-white text-primary-600 font-semibold rounded-lg border-2 border-primary-200 hover:bg-primary-50 transition-colors"
+            className="inline-flex items-center justify-center px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg border-2 border-blue-200 hover:bg-blue-50 transition-colors"
           >
             View Knowledge Bases
           </a>

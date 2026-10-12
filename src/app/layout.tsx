@@ -23,7 +23,7 @@ export default function RootLayout({
               <div className="flex justify-between items-center h-16">
                 {/* Logo */}
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-600 to-primary-700 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
                     <span className="text-white font-bold text-sm">M</span>
                   </div>
                   <h1 className="text-xl font-semibold text-slate-900">MoKnowledge</h1>
@@ -33,13 +33,13 @@ export default function RootLayout({
                 <nav className="hidden md:flex items-center gap-8">
                   <a
                     href="/knowledge"
-                    className="text-slate-700 hover:text-primary-600 font-medium text-sm transition-colors"
+                    className="text-slate-700 hover:text-blue-600 font-medium text-sm transition-colors"
                   >
                     Build
                   </a>
                   <a
                     href="/knowledge/view"
-                    className="text-slate-700 hover:text-primary-600 font-medium text-sm transition-colors"
+                    className="text-slate-700 hover:text-blue-600 font-medium text-sm transition-colors"
                   >
                     View Bases
                   </a>
@@ -78,7 +78,7 @@ export default function RootLayout({
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                       <span className="text-white font-bold text-sm">M</span>
                     </div>
                     <span className="font-semibold">MoKnowledge</span>
