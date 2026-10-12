@@ -167,6 +167,156 @@ function extractUSPs(html: string): string[] {
   return [...new Set(usps)].slice(0, 5);
 }
 
+// Extract services/products from common patterns
+function extractServices(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const services: { name: string; description: string }[] = [];
+
+  // Look for service containers (div, li, section with common class names)
+  const serviceSelectors = [
+    '[class*="service"]',
+    '[class*="product"]',
+    '[class*="offering"]',
+    '[class*="feature"]',
+  ];
+
+  serviceSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const headings = el.querySelectorAll("h2, h3, h4, .title, .name");
+      const descriptions = el.querySelectorAll("p, .description, .details");
+
+      if (headings.length > 0) {
+        const name = headings[0].textContent?.trim() || "";
+        const description = descriptions[0]?.textContent?.trim() || "";
+
+        if (name && name.length > 3 && name.length < 100) {
+          services.push({ name, description: description.substring(0, 200) });
+        }
+      }
+    });
+  });
+
+  return services.slice(0, 8);
+}
+
+// Extract team members from common patterns
+function extractTeamMembers(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const team: { name: string; title: string; description: string }[] = [];
+
+  // Look for team sections
+  const teamSelectors = [
+    '[class*="team"]',
+    '[class*="staff"]',
+    '[class*="people"]',
+    '[class*="about"] [class*="person"]',
+  ];
+
+  teamSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const name = el.querySelector("h2, h3, h4, .name, .person-name")?.textContent?.trim() || "";
+      const title = el.querySelector(".title, .position, .role, .job-title")?.textContent?.trim() || "";
+      const description = el.querySelector("p, .bio, .description")?.textContent?.trim() || "";
+
+      if (name && name.length > 3 && name.length < 100) {
+        team.push({
+          name,
+          title: title.substring(0, 50),
+          description: description.substring(0, 150)
+        });
+      }
+    });
+  });
+
+  return team.slice(0, 8);
+}
+
+// Extract FAQ content
+function extractFAQs(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const faqs: { question: string; answer: string }[] = [];
+
+  // Look for FAQ patterns
+  const faqSelectors = [
+    '[class*="faq"]',
+    '[class*="qa"]',
+    '[class*="question"]',
+    'dt',
+  ];
+
+  faqSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const question = el.querySelector("h3, h4, .question, summary")?.textContent?.trim() ||
+                      el.textContent?.trim() || "";
+      const answerEl = el.nextElementSibling;
+      const answer = answerEl?.querySelector("p, .answer, [class*='content']")?.textContent?.trim() ||
+                    answerEl?.textContent?.trim() || "";
+
+      if (question && answer && question.length > 5 && answer.length > 10) {
+        faqs.push({
+          question: question.substring(0, 150),
+          answer: answer.substring(0, 300)
+        });
+      }
+    });
+  });
+
+  return faqs.slice(0, 6);
+}
+
+// Extract testimonials/reviews
+function extractTestimonials(html: string) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const testimonials: string[] = [];
+
+  // Look for testimonial patterns
+  const testSelectors = [
+    '[class*="testimonial"]',
+    '[class*="review"]',
+    '[class*="quote"]',
+    '[class*="feedback"]',
+    '[class*="case-study"]',
+  ];
+
+  testSelectors.forEach((selector) => {
+    const elements = doc.querySelectorAll(selector);
+    elements.forEach((el) => {
+      const text = el.querySelector("p, blockquote, .text, .content")?.textContent?.trim() || "";
+      if (text && text.length > 20 && text.length < 500) {
+        testimonials.push(text);
+      }
+    });
+  });
+
+  return [...new Set(testimonials)].slice(0, 5);
+}
+
+// Extract mission/vision/values statements
+function extractMissionStatement(html: string): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = doc.body.textContent || "";
+
+  // Look for mission/vision patterns
+  const patterns = [
+    /(?:our mission|mission statement)[:\s]*([^.!?]{20,300})/i,
+    /(?:our vision|vision statement)[:\s]*([^.!?]{20,300})/i,
+    /(?:our purpose|core purpose)[:\s]*([^.!?]{20,300})/i,
+    /(?:our values|core values)[:\s]*([^.!?]{20,300})/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+
+  return "";
+}
+
 export function parseWebsite(html: string, url: string): Knowledge {
   const metadata = extractMetadata(html);
   const { phones } = extractUrls(html);
@@ -176,6 +326,13 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const fonts = extractFonts(html);
   const themes = extractContentThemes(html);
   const usps = extractUSPs(html);
+
+  // Enhanced extraction
+  const services = extractServices(html);
+  const teamMembers = extractTeamMembers(html);
+  const faqs = extractFAQs(html);
+  const testimonials = extractTestimonials(html);
+  const mission = extractMissionStatement(html);
 
   const companyName = metadata.title.split("|")[0].trim() || new URL(url).hostname;
   const allText = extractText(html);
@@ -231,7 +388,11 @@ export function parseWebsite(html: string, url: string): Knowledge {
   if (colors.length > 0) confidence += 0.05;
   if (themes.length > 0) confidence += 0.1;
   if (usps.length > 0) confidence += 0.1;
-  confidence = Math.min(confidence, 0.95); // Cap at 0.95
+  if (services.length > 0) confidence += 0.05;
+  if (teamMembers.length > 0) confidence += 0.05;
+  if (faqs.length > 0) confidence += 0.03;
+  if (testimonials.length > 0) confidence += 0.03;
+  confidence = Math.min(confidence, 0.99); // Cap at 0.99 for high quality
 
   return {
     id,
@@ -242,11 +403,23 @@ export function parseWebsite(html: string, url: string): Knowledge {
     marketAndCustomers,
     brandingAndStyle,
     onlinePresence,
-    offerings: [],
-    keyPeople: [],
+    offerings: services.map(s => ({
+      name: s.name,
+      category: "Service",
+      description: s.description,
+      features: [],
+    })),
+    keyPeople: teamMembers.map(t => ({
+      name: t.name,
+      title: t.title,
+      description: t.description,
+    })),
     thinkBigger: {
       contentThemes: themes,
       uniqueSellingPropositions: usps,
+      testimonials: testimonials.length > 0 ? testimonials : undefined,
+      faqs: faqs.length > 0 ? faqs : undefined,
+      communityValues: mission || undefined,
     },
     scrapedAt: now,
     updatedAt: now,
