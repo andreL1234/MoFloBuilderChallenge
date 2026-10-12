@@ -23,6 +23,9 @@
       --tw-drop-shadow-alpha: 100%;
       --tw-drop-shadow-size: initial;
       --tw-duration: initial;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-scale-z: 1;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;
       --tw-shadow-alpha: 100%;
@@ -224,6 +227,21 @@
   background-image: linear-gradient(var(--tw-gradient-stops));
 }
 
+.bg-gradient-to-r {
+  --tw-gradient-position: to right in oklab;
+  background-image: linear-gradient(var(--tw-gradient-stops));
+}
+
+.bg-gradient-to-tr {
+  --tw-gradient-position: to top right in oklab;
+  background-image: linear-gradient(var(--tw-gradient-stops));
+}
+
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 .text-center {
   text-align: center;
 }
@@ -252,8 +270,12 @@
   white-space: pre-wrap;
 }
 
-.opacity-5 {
-  opacity: .05;
+.text-transparent {
+  color: #0000;
+}
+
+.opacity-20 {
+  opacity: .2;
 }
 
 .opacity-25 {
@@ -291,6 +313,12 @@
   transition-duration: var(--tw-duration, 0s);
 }
 
+.transition-shadow {
+  transition-property: box-shadow;
+  transition-timing-function: var(--tw-ease, ease);
+  transition-duration: var(--tw-duration, 0s);
+}
+
 .duration-300 {
   --tw-duration: .3s;
   transition-duration: .3s;
@@ -302,6 +330,17 @@
 }
 
 @media (hover: hover) {
+  .group-hover\:w-full:is(:where(.group):hover *) {
+    width: 100%;
+  }
+
+  .hover\:scale-105:hover {
+    --tw-scale-x: 105%;
+    --tw-scale-y: 105%;
+    --tw-scale-z: 105%;
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+
   .hover\:underline:hover {
     text-decoration-line: underline;
   }
@@ -335,7 +374,7 @@ html, body {
 .btn-primary {
   color: #fff;
   cursor: pointer;
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
   border: none;
   border-radius: .5rem;
   justify-content: center;
@@ -344,24 +383,26 @@ html, body {
   font-weight: 600;
   transition: all .2s;
   display: inline-flex;
-  box-shadow: 0 1px 2px #0000000d;
+  box-shadow: 0 4px 12px #2563eb4d;
 }
 
 .btn-primary:hover {
-  background-color: #1d4ed8;
-  box-shadow: 0 4px 6px -1px #0000001a;
+  background: linear-gradient(135deg, #1d4ed8 0%, #1937b4 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px #2563eb66;
 }
 
 .btn-primary:disabled {
   opacity: .5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-secondary {
   color: #2563eb;
   cursor: pointer;
   background-color: #fff;
-  border: 2px solid #bfdbfe;
+  border: 2px solid #93c5fd;
   border-radius: .5rem;
   justify-content: center;
   align-items: center;
@@ -369,21 +410,26 @@ html, body {
   font-weight: 600;
   transition: all .2s;
   display: inline-flex;
+  box-shadow: 0 2px 6px #2563eb1a;
 }
 
 .btn-secondary:hover {
   background-color: #eff6ff;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #2563eb26;
 }
 
 .btn-secondary:disabled {
   opacity: .5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-danger {
   color: #fff;
   cursor: pointer;
-  background-color: #dc2626;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   border: none;
   border-radius: .5rem;
   justify-content: center;
@@ -392,29 +438,32 @@ html, body {
   font-weight: 600;
   transition: all .2s;
   display: inline-flex;
-  box-shadow: 0 1px 2px #0000000d;
+  box-shadow: 0 4px 12px #dc26264d;
 }
 
 .btn-danger:hover {
-  background-color: #b91c1c;
-  box-shadow: 0 4px 6px -1px #0000001a;
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px #dc262666;
 }
 
 .card {
   background-color: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #bfdbfe;
   border-radius: .5rem;
   padding: 1.5rem;
-  transition: box-shadow .2s;
-  box-shadow: 0 1px 3px #0000001a;
+  transition: all .2s;
+  box-shadow: 0 4px 12px #2563eb14;
 }
 
 .card:hover {
-  box-shadow: 0 10px 15px -3px #0000001a;
+  border-color: #93c5fd;
+  box-shadow: 0 12px 24px #2563eb26;
 }
 
 .input, .select, .textarea {
-  border: 1px solid #cbd5e1;
+  background-color: #f9fafb;
+  border: 1.5px solid #bfdbfe;
   border-radius: .5rem;
   width: 100%;
   padding: .625rem 1rem;
@@ -423,18 +472,25 @@ html, body {
   transition: all .2s;
 }
 
+.input:hover, .select:hover, .textarea:hover {
+  background-color: #fff;
+  border-color: #93c5fd;
+}
+
 .input:focus, .select:focus, .textarea:focus {
-  border-color: #0000;
+  background-color: #fff;
+  border-color: #2563eb;
   outline: none;
-  box-shadow: 0 0 0 3px #2563eb1a, 0 0 0 2px #2563eb;
+  box-shadow: 0 0 0 3px #2563eb1a;
 }
 
 .badge-success {
   color: #16a34a;
-  background-color: #dcfce7;
+  background: linear-gradient(135deg, #16a34a1a 0%, #22c55e0d 100%);
+  border: 1px solid #16a34a33;
   border-radius: 9999px;
   align-items: center;
-  padding: .25rem .75rem;
+  padding: .375rem .875rem;
   font-size: .75rem;
   font-weight: 600;
   display: inline-flex;
@@ -442,10 +498,11 @@ html, body {
 
 .badge-warning {
   color: #b45309;
-  background-color: #fef3c7;
+  background: linear-gradient(135deg, #b453091a 0%, #d977060d 100%);
+  border: 1px solid #b4530933;
   border-radius: 9999px;
   align-items: center;
-  padding: .25rem .75rem;
+  padding: .375rem .875rem;
   font-size: .75rem;
   font-weight: 600;
   display: inline-flex;
@@ -453,10 +510,11 @@ html, body {
 
 .badge-danger {
   color: #dc2626;
-  background-color: #fee2e2;
+  background: linear-gradient(135deg, #dc26261a 0%, #ef44440d 100%);
+  border: 1px solid #dc262633;
   border-radius: 9999px;
   align-items: center;
-  padding: .25rem .75rem;
+  padding: .375rem .875rem;
   font-size: .75rem;
   font-weight: 600;
   display: inline-flex;
@@ -464,10 +522,11 @@ html, body {
 
 .badge-info {
   color: #2563eb;
-  background-color: #dbeafe;
+  background: linear-gradient(135deg, #2563eb1a 0%, #3b82f60d 100%);
+  border: 1px solid #2563eb33;
   border-radius: 9999px;
   align-items: center;
-  padding: .25rem .75rem;
+  padding: .375rem .875rem;
   font-size: .75rem;
   font-weight: 600;
   display: inline-flex;
@@ -609,6 +668,24 @@ html, body {
 @property --tw-duration {
   syntax: "*";
   inherits: false
+}
+
+@property --tw-scale-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --tw-scale-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --tw-scale-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 1;
 }
 
 @property --tw-shadow {
