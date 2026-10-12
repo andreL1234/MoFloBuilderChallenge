@@ -2,12 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { Knowledge } from "@/types/knowledge";
-import { downloadJSON, downloadCSV } from "@/utils/storage";
+import { downloadJSON, downloadCSV, importJSON } from "@/utils/storage";
 
 interface KnowledgeListProps {
   knowledgeList: Knowledge[];
   onEdit: (knowledge: Knowledge) => void;
   onDelete: (id: string) => void;
+  onDuplicate?: (id: string) => void;
+  onImport?: (knowledge: Knowledge) => void;
 }
 
 type ViewMode = "cards" | "table" | "detail";
@@ -17,6 +19,8 @@ export default function KnowledgeList({
   knowledgeList,
   onEdit,
   onDelete,
+  onDuplicate,
+  onImport,
 }: KnowledgeListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
@@ -76,6 +80,28 @@ export default function KnowledgeList({
     }
   };
 
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      const imported = importJSON(content);
+
+      if (imported && onImport) {
+        onImport(imported);
+        alert("Knowledge base imported successfully!");
+      } else {
+        alert("Failed to import knowledge base. Invalid JSON format.");
+      }
+    };
+    reader.readAsText(file);
+
+    // Reset input so same file can be imported again
+    event.target.value = "";
+  };
+
   return (
     <div className="space-y-6">
       {/* Search and Controls */}
@@ -109,6 +135,17 @@ export default function KnowledgeList({
           >
             Export CSV
           </button>
+          {onImport && (
+            <label className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium cursor-pointer">
+              Import JSON
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="hidden"
+              />
+            </label>
+          )}
         </div>
 
         {/* Filters */}
@@ -244,6 +281,17 @@ export default function KnowledgeList({
                 >
                   Export
                 </button>
+                {onDuplicate && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDuplicate(kb.id);
+                    }}
+                    className="flex-1 text-sm px-3 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition"
+                  >
+                    Duplicate
+                  </button>
+                )}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -306,6 +354,14 @@ export default function KnowledgeList({
                       >
                         Export
                       </button>
+                      {onDuplicate && (
+                        <button
+                          onClick={() => onDuplicate(kb.id)}
+                          className="text-purple-600 hover:underline text-sm font-medium"
+                        >
+                          Duplicate
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDelete(kb.id)}
                         className="text-red-600 hover:underline text-sm font-medium"
@@ -360,6 +416,14 @@ export default function KnowledgeList({
               >
                 Download JSON
               </button>
+              {onDuplicate && (
+                <button
+                  onClick={() => onDuplicate(selectedKnowledge.id)}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+                >
+                  Duplicate
+                </button>
+              )}
               <button
                 onClick={() => handleDelete(selectedKnowledge.id)}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"

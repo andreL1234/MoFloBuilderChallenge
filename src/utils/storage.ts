@@ -1,5 +1,44 @@
 import { Knowledge } from "@/types/knowledge";
 
+export function validateKnowledge(data: unknown): data is Knowledge {
+  if (!data || typeof data !== "object") return false;
+  const kb = data as Record<string, unknown>;
+
+  return (
+    typeof kb.id === "string" &&
+    typeof kb.sourceUrl === "string" &&
+    typeof kb.companyName === "string" &&
+    typeof kb.scrapedAt === "string" &&
+    typeof kb.updatedAt === "string" &&
+    kb.foundation !== undefined &&
+    kb.positioning !== undefined &&
+    kb.marketAndCustomers !== undefined &&
+    kb.brandingAndStyle !== undefined &&
+    kb.onlinePresence !== undefined
+  );
+}
+
+export function importJSON(jsonText: string): Knowledge | null {
+  try {
+    const data = JSON.parse(jsonText);
+
+    if (validateKnowledge(data)) {
+      // Generate new ID to avoid conflicts
+      const newId = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      return {
+        ...data,
+        id: newId,
+        scrapedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error("Failed to import JSON:", error);
+    return null;
+  }
+}
+
 export function loadKnowledgeList(): Knowledge[] {
   if (typeof window === "undefined") return [];
 

@@ -12,6 +12,7 @@ interface KnowledgeContextType {
   addKnowledge: (knowledge: Knowledge) => void;
   updateKnowledge: (knowledge: Knowledge) => void;
   deleteKnowledge: (id: string) => void;
+  duplicateKnowledge: (id: string) => void;
   setError: (error: string | null) => void;
   setIsLoading: (loading: boolean) => void;
 }
@@ -97,6 +98,25 @@ export function KnowledgeProvider({
     }
   };
 
+  const duplicateKnowledge = (id: string) => {
+    const existing = knowledgeList.find((k) => k.id === id);
+    if (!existing) return;
+
+    const now = new Date().toISOString();
+    const newId = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    const duplicate: Knowledge = {
+      ...existing,
+      id: newId,
+      companyName: `${existing.companyName} (Copy)`,
+      scrapedAt: now,
+      updatedAt: now,
+    };
+
+    addKnowledge(duplicate);
+    setCurrentKnowledge(duplicate);
+  };
+
   return (
     <KnowledgeContext.Provider
       value={{
@@ -108,6 +128,7 @@ export function KnowledgeProvider({
         addKnowledge,
         updateKnowledge,
         deleteKnowledge,
+        duplicateKnowledge,
         setError,
         setIsLoading,
       }}
