@@ -145,21 +145,6 @@ export default function KnowledgeEditor({
           />
         </div>
 
-        {/* Year Founded */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Year Founded
-          </label>
-          <input
-            type="number"
-            value={edited.foundation.yearFounded || ""}
-            onChange={(e) => {
-              const year = e.target.value ? parseInt(e.target.value, 10) : undefined;
-              handleFoundationChange("yearFounded", year);
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-        </div>
       </div>
 
       {/* Overview */}
