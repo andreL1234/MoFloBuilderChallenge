@@ -183,8 +183,12 @@ export function parseWebsite(html: string, url: string): Knowledge {
     companyRole: "Service Provider",
   };
 
+  // Extract better pitch text (remove first short lines which are often navigation)
+  const textLines = allText.split("\n").filter(line => line.trim().length > 20);
+  const pitchText = textLines.slice(0, 5).join(" ").substring(0, 400).trim();
+
   const positioning: Positioning = {
-    pitch: allText.substring(0, 500),
+    pitch: pitchText || "Company information from website",
   };
 
   const marketAndCustomers: MarketAndCustomers = {
@@ -207,6 +211,16 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const now = new Date().toISOString();
   const id = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+  // Calculate confidence score based on what was extracted
+  let confidence = 0.5;
+  if (metadata.description) confidence += 0.1;
+  if (socialLinks.linkedin || socialLinks.facebook) confidence += 0.1;
+  if (logos.length > 0) confidence += 0.05;
+  if (colors.length > 0) confidence += 0.05;
+  if (themes.length > 0) confidence += 0.1;
+  if (usps.length > 0) confidence += 0.1;
+  confidence = Math.min(confidence, 0.95); // Cap at 0.95
+
   return {
     id,
     sourceUrl: url,
@@ -224,6 +238,6 @@ export function parseWebsite(html: string, url: string): Knowledge {
     },
     scrapedAt: now,
     updatedAt: now,
-    confidenceScore: 0.6,
+    confidenceScore: confidence,
   };
 }

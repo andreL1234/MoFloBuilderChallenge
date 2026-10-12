@@ -112,7 +112,7 @@ export default function KnowledgeList({
                   }}
                   className="flex-1 text-sm px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition"
                 >
-                  Edit
+                  View
                 </button>
                 <button
                   onClick={(e) => {
@@ -171,7 +171,7 @@ export default function KnowledgeList({
                         onClick={() => onEdit(kb)}
                         className="text-blue-600 hover:underline text-sm font-medium"
                       >
-                        Edit
+                        View
                       </button>
                       <button
                         onClick={() => downloadJSON(kb)}
