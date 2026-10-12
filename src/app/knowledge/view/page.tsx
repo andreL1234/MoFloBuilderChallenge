@@ -7,7 +7,7 @@ import { Knowledge } from "@/types/knowledge";
 
 export default function ViewPage() {
   const router = useRouter();
-  const { knowledgeList, deleteKnowledge, setCurrentKnowledge } = useKnowledge();
+  const { knowledgeList, deleteKnowledge, setCurrentKnowledge, duplicateKnowledge, addKnowledge } = useKnowledge();
 
   const handleEdit = (knowledge: Knowledge) => {
     setCurrentKnowledge(knowledge);
@@ -16,6 +16,14 @@ export default function ViewPage() {
 
   const handleDelete = (id: string) => {
     deleteKnowledge(id);
+  };
+
+  const handleDuplicate = (id: string) => {
+    duplicateKnowledge(id);
+  };
+
+  const handleImport = (knowledge: Knowledge) => {
+    addKnowledge(knowledge);
   };
 
   return (
@@ -31,6 +39,8 @@ export default function ViewPage() {
         knowledgeList={knowledgeList}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onDuplicate={handleDuplicate}
+        onImport={handleImport}
       />
     </div>
   );
