@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-slate-50">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-slate-50" suppressHydrationWarning>
         <KnowledgeProvider>
           {/* Header */}
           <header className="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
