@@ -101,7 +101,13 @@ export default function KnowledgeList({
                   </span>
                 )}
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                  {((kb.confidenceScore || 0) * 100).toFixed(0)}% confidence
+                  {
+                    (() => {
+                      const score = kb.confidenceScore || 0;
+                      const normalized = typeof score === 'number' && score > 1 ? score / 100 : score;
+                      return `${(Math.max(0, Math.min(1, normalized)) * 100).toFixed(0)}% confidence`;
+                    })()
+                  }
                 </span>
               </div>
               <div className="flex gap-2">
@@ -162,7 +168,13 @@ export default function KnowledgeList({
                   <td className="px-6 py-3 text-gray-700">{kb.foundation.yearFounded || "-"}</td>
                   <td className="px-6 py-3">
                     <span className="bg-blue-100 text-blue-700 text-sm px-2 py-1 rounded">
-                      {((kb.confidenceScore || 0) * 100).toFixed(0)}%
+                      {
+                        (() => {
+                          const score = kb.confidenceScore || 0;
+                          const normalized = typeof score === 'number' && score > 1 ? score / 100 : score;
+                          return `${(Math.max(0, Math.min(1, normalized)) * 100).toFixed(0)}%`;
+                        })()
+                      }
                     </span>
                   </td>
                   <td className="px-6 py-3 text-right">
