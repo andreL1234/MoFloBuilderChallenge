@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Knowledge } from "@/types/knowledge";
-import { downloadJSON } from "@/utils/storage";
+import { downloadJSON, downloadCSV } from "@/utils/storage";
 
 interface KnowledgeListProps {
   knowledgeList: Knowledge[];
@@ -11,6 +11,7 @@ interface KnowledgeListProps {
 }
 
 type ViewMode = "cards" | "table" | "detail";
+type SortBy = "name" | "date" | "industry" | "confidence";
 
 export default function KnowledgeList({
   knowledgeList,
@@ -20,12 +21,51 @@ export default function KnowledgeList({
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>("date");
+  const [filterIndustry, setFilterIndustry] = useState<string>("");
+  const [filterModel, setFilterModel] = useState<string>("");
+  const [minConfidence, setMinConfidence] = useState<number>(0);
 
-  const filtered = knowledgeList.filter(
-    (k) =>
-      k.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      k.foundation.industry.toLowerCase().includes(searchTerm.toLowerCase())
+  const industries = useMemo(
+    () => [...new Set(knowledgeList.map((k) => k.foundation.industry))].sort(),
+    [knowledgeList]
   );
+
+  const models = useMemo(
+    () => [...new Set(knowledgeList.map((k) => k.foundation.businessModel))].sort(),
+    [knowledgeList]
+  );
+
+  const filtered = useMemo(() => {
+    let result = knowledgeList.filter((k) => {
+      const matchesSearch =
+        k.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        k.foundation.industry.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesIndustry = !filterIndustry || k.foundation.industry === filterIndustry;
+      const matchesModel = !filterModel || k.foundation.businessModel === filterModel;
+      const matchesConfidence = (k.confidenceScore || 0) >= minConfidence / 100;
+
+      return matchesSearch && matchesIndustry && matchesModel && matchesConfidence;
+    });
+
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case "name":
+          return a.companyName.localeCompare(b.companyName);
+        case "date":
+          return new Date(b.scrapedAt).getTime() - new Date(a.scrapedAt).getTime();
+        case "industry":
+          return a.foundation.industry.localeCompare(b.foundation.industry);
+        case "confidence":
+          return (b.confidenceScore || 0) - (a.confidenceScore || 0);
+        default:
+          return 0;
+      }
+    });
+
+    return result;
+  }, [knowledgeList, searchTerm, sortBy, filterIndustry, filterModel, minConfidence]);
 
   const selectedKnowledge = filtered.find((k) => k.id === selectedId);
 
@@ -62,6 +102,81 @@ export default function KnowledgeList({
                 {mode.charAt(0).toUpperCase() + mode.slice(1)}
               </button>
             ))}
+          </div>
+          <button
+            onClick={() => downloadCSV(filtered)}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+          >
+            Export CSV
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Sort By
+            </label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortBy)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+            >
+              <option value="date">Recently Scraped</option>
+              <option value="name">Company Name</option>
+              <option value="industry">Industry</option>
+              <option value="confidence">Confidence Score</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Industry
+            </label>
+            <select
+              value={filterIndustry}
+              onChange={(e) => setFilterIndustry(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+            >
+              <option value="">All Industries</option>
+              {industries.map((industry) => (
+                <option key={industry} value={industry}>
+                  {industry}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Business Model
+            </label>
+            <select
+              value={filterModel}
+              onChange={(e) => setFilterModel(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+            >
+              <option value="">All Models</option>
+              {models.map((model) => (
+                <option key={model} value={model}>
+                  {model}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Min Confidence: {minConfidence}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={minConfidence}
+              onChange={(e) => setMinConfidence(parseInt(e.target.value))}
+              className="w-full"
+            />
           </div>
         </div>
 
