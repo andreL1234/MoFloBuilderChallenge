@@ -154,6 +154,19 @@ These fields add value across all downstream applications:
 
 ## Scraping Approach
 
+### Architecture
+
+The scraping is implemented as a **server-side API route** (`/api/scrape`):
+
+1. **Client submits URL** - User enters website in form
+2. **API Route processes** - Server-side Next.js route (`src/app/api/scrape/route.ts`) handles the fetch
+3. **Server fetches HTML** - No CORS restrictions (server-to-server is unrestricted)
+4. **Client receives HTML** - Response sent back to browser as JSON
+5. **Parser extracts data** - Client-side parsing logic processes the HTML
+6. **Results displayed** - User sees structured knowledge base fields
+
+**Why server-side?** Browsers block direct fetches to external sites (CORS policy). The server has no such restrictions, so the API route acts as a proxy that the browser can call safely.
+
 ### Extraction Strategy
 
 The scraper extracts data using multiple signals:
@@ -286,9 +299,9 @@ Beyond the baseline schema, consider adding:
 2. **JavaScript-rendered content** - Only fetches HTML, no client-side JS execution
 3. **Rate limiting** - No built-in rate limiting for production use
 4. **Authentication-required content** - Cannot scrape behind login
-5. **CORS restrictions** - Limited by browser security policies
-6. **Single-pass parsing** - No multi-depth crawling across site
-7. **Storage capacity** - localStorage has ~5-10MB limit per domain
+5. **Single-pass parsing** - No multi-depth crawling across site
+6. **Storage capacity** - localStorage has ~5-10MB limit per domain
+7. **No request caching** - Each scrape fetches fresh HTML (no cache layer)
 
 ## How This Schema Improves Downstream Applications
 
