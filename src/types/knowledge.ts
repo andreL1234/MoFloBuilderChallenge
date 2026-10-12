@@ -11,6 +11,8 @@ export interface CompanyFoundation {
   otherLocations?: string[];
   serviceLocations?: string[];
   alternativeNames?: string[];
+  industryConfidence?: number;
+  businessModelConfidence?: number;
 }
 
 export interface Positioning {

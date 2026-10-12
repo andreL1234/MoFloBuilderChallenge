@@ -22,7 +22,7 @@ export default function KnowledgeEditor({
     setEdited({ ...edited, companyName: name });
   };
 
-  const handleFoundationChange = (field: string, value: string) => {
+  const handleFoundationChange = (field: string, value: string | number) => {
     setEdited({
       ...edited,
       foundation: {
@@ -95,9 +95,22 @@ export default function KnowledgeEditor({
 
         {/* Industry */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Industry
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-gray-700">
+              Industry
+            </label>
+            {edited.foundation.industryConfidence !== undefined && (
+              <span className={`text-xs px-2 py-0.5 rounded ${
+                edited.foundation.industryConfidence >= 0.75
+                  ? "bg-green-100 text-green-700"
+                  : edited.foundation.industryConfidence >= 0.5
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-gray-100 text-gray-700"
+              }`}>
+                {Math.round(edited.foundation.industryConfidence * 100)}% confidence
+              </span>
+            )}
+          </div>
           <input
             type="text"
             value={edited.foundation.industry}
@@ -108,9 +121,22 @@ export default function KnowledgeEditor({
 
         {/* Business Model */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Business Model
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-sm font-medium text-gray-700">
+              Business Model
+            </label>
+            {edited.foundation.businessModelConfidence !== undefined && (
+              <span className={`text-xs px-2 py-0.5 rounded ${
+                edited.foundation.businessModelConfidence >= 0.75
+                  ? "bg-green-100 text-green-700"
+                  : edited.foundation.businessModelConfidence >= 0.5
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-gray-100 text-gray-700"
+              }`}>
+                {Math.round(edited.foundation.businessModelConfidence * 100)}% confidence
+              </span>
+            )}
+          </div>
           <input
             type="text"
             value={edited.foundation.businessModel}

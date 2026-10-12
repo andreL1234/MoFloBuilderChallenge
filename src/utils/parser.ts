@@ -317,6 +317,96 @@ function extractMissionStatement(html: string): string {
   return "";
 }
 
+// Detect industry from content with confidence score
+function detectIndustry(html: string): { industry: string; confidence: number } {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = (doc.body.textContent || "").toLowerCase();
+  const metaTags = doc.querySelectorAll("meta[name='keywords'], meta[name='description'], meta[property*='og:']");
+  let metaText = "";
+  metaTags.forEach(tag => {
+    metaText += (tag.getAttribute("content") || "").toLowerCase();
+  });
+
+  const fullText = text + " " + metaText;
+
+  // Industry patterns with confidence weights
+  const patterns: Array<[RegExp, string, number]> = [
+    [/(?:accounting|tax|bookkeeping|cpa|financial|audit)/gi, "Accounting & Tax Services", 0.85],
+    [/(?:software|saas|app|cloud|developer|programming)/gi, "Software/SaaS", 0.80],
+    [/(?:real estate|realtor|property|mortgage|residential)/gi, "Real Estate", 0.80],
+    [/(?:healthcare|medical|clinic|doctor|hospital|dental)/gi, "Healthcare", 0.85],
+    [/(?:drilling|well|construction|engineering|contractor)/gi, "Construction/Resources", 0.75],
+    [/(?:marketing|advertising|agency|creative|digital)/gi, "Marketing/Advertising", 0.70],
+    [/(?:ecommerce|retail|shop|store|merchandise)/gi, "Retail/E-commerce", 0.75],
+    [/(?:consulting|advisory|strategy|management)/gi, "Consulting", 0.65],
+    [/(?:education|training|course|university|school)/gi, "Education", 0.75],
+    [/(?:hospitality|restaurant|hotel|travel|tourism)/gi, "Hospitality/Travel", 0.70],
+  ];
+
+  let bestMatch = { industry: "Unknown", confidence: 0 };
+
+  for (const [pattern, industry, baseConfidence] of patterns) {
+    const matches = fullText.match(pattern);
+    if (matches) {
+      const confidence = Math.min(baseConfidence + (matches.length * 0.05), 0.95);
+      if (confidence > bestMatch.confidence) {
+        bestMatch = { industry, confidence: Math.round(confidence * 100) / 100 };
+      }
+    }
+  }
+
+  return bestMatch;
+}
+
+// Detect business model from content with confidence score
+function detectBusinessModel(html: string): { model: string; confidence: number } {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const text = (doc.body.textContent || "").toLowerCase();
+
+  let confidence = 0;
+  let model = "Service Provider"; // Safe default
+
+  // Check for pricing signals (B2B SaaS/Subscription)
+  if (text.includes("pricing") || text.includes("subscription") || text.includes("per month")) {
+    confidence = 0.75;
+    model = "B2B SaaS / Subscription";
+  }
+
+  // Check for e-commerce
+  if (text.includes("add to cart") || text.includes("checkout") || text.includes("shop")) {
+    confidence = 0.80;
+    model = "E-commerce";
+  }
+
+  // Check for service business
+  if (text.includes("book appointment") || text.includes("schedule") || text.includes("consultation")) {
+    confidence = Math.max(confidence, 0.70);
+    model = "Service Business";
+  }
+
+  // Check for B2B service provider
+  if (text.includes("contact sales") || text.includes("enterprise") || text.includes("custom solution")) {
+    confidence = Math.max(confidence, 0.65);
+    model = "B2B Service Provider";
+  }
+
+  // Check for freelance/agency
+  if (text.includes("portfolio") || text.includes("case studies") || text.includes("hire us")) {
+    confidence = Math.max(confidence, 0.60);
+    model = "Agency/Freelance";
+  }
+
+  // Low confidence = unsure
+  if (confidence === 0) {
+    confidence = 0.35; // Very low confidence in default
+  }
+
+  return {
+    model,
+    confidence: Math.round(confidence * 100) / 100
+  };
+}
+
 export function parseWebsite(html: string, url: string): Knowledge {
   const metadata = extractMetadata(html);
   const { phones } = extractUrls(html);
@@ -326,6 +416,10 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const fonts = extractFonts(html);
   const themes = extractContentThemes(html);
   const usps = extractUSPs(html);
+
+  // Auto-detect industry and business model with confidence scores
+  const industryDetection = detectIndustry(html);
+  const businessModelDetection = detectBusinessModel(html);
 
   // Enhanced extraction (simplified for reliability)
   // Note: Advanced extraction functions exist but are disabled for MVP
@@ -341,9 +435,11 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const foundation: CompanyFoundation = {
     overview: metadata.description || "Company information from website",
     website: url,
-    industry: "Unknown",
-    businessModel: "Unknown",
+    industry: industryDetection.industry,
+    businessModel: businessModelDetection.model,
     companyRole: "Service Provider",
+    industryConfidence: industryDetection.confidence,
+    businessModelConfidence: businessModelDetection.confidence,
   };
 
   // Extract better pitch text - prefer metadata description, then find good paragraph
