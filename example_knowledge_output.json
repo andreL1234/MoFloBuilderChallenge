@@ -1,0 +1,253 @@
+{
+  "id": "kb_1729000000_abc123def456",
+  "sourceUrl": "https://account-it.net/",
+  "companyName": "Account-it Consulting Services",
+  "foundation": {
+    "overview": "Account-it Consulting Services, LLC is a trusted partner for comprehensive tax and accounting services based in Boynton Beach, Florida. The firm specializes in tax preparation and planning for both individuals and businesses, ensuring clients navigate the complexities of the tax system with confidence.",
+    "website": "https://account-it.net/",
+    "industry": "Accounting and Tax Services",
+    "businessModel": "Service provider offering tax preparation, planning, QuickBooks services, and payroll for small businesses and individuals",
+    "companyRole": "Service Provider",
+    "yearFounded": 2003,
+    "legalEntityType": "LLC",
+    "employeeCount": "1-5",
+    "mainAddress": "Boynton Beach, Florida 33437",
+    "otherLocations": [],
+    "serviceLocations": [
+      "Florida",
+      "Boynton Beach",
+      "South Florida"
+    ],
+    "alternativeNames": [
+      "Account-it Consulting Services, LLC",
+      "Account it"
+    ]
+  },
+  "positioning": {
+    "pitch": "Account-it Consulting Services, LLC is your top-rated tax partner, committed to maximizing your returns and minimizing your stress. We offer the expertise of a founder with over 14 years of experience as a CFO and controller, providing valuable business insights that go beyond simple accounting.",
+    "foundingStory": "Founder Doug Cohen started his own accounting practice in South Florida in 2003. His experience includes years of public accounting and 14 years as a CFO/Controller. This background allows the firm to provide the service and support of a highly qualified CFO and Controller on a part-time or interim basis, without the high overhead costs of larger firms."
+  },
+  "marketAndCustomers": {
+    "targetBuyers": [
+      "Individuals",
+      "Small businesses with 1-10 employees",
+      "Brand-new startups",
+      "Businesses nearing retirement"
+    ],
+    "customerNeeds": [
+      "Alleviate stress of complex tax returns and financial planning",
+      "Ensure tax compliance while legally reducing tax liabilities",
+      "Maximize after-tax income",
+      "Simplify payroll processing and ensure compliance",
+      "Efficient resolution of IRS issues"
+    ],
+    "idealPersona": "Small business owner (1-10 employees) in the Boynton Beach, Florida area, at any stage from startup to mature business. Values trusted expertise and comprehensive services including QuickBooks management and payroll.",
+    "industryGroupings": [
+      "Medical practices",
+      "Law firms",
+      "Real estate brokers",
+      "Property management",
+      "Internet sales",
+      "Construction",
+      "Restaurants",
+      "Service industry"
+    ],
+    "channels": [
+      "Website",
+      "Online contact forms",
+      "Appointment scheduler",
+      "Newsletter",
+      "Client referrals"
+    ],
+    "funnels": [
+      "Contact form",
+      "Appointment scheduler",
+      "Newsletter signup",
+      "Client referrals"
+    ],
+    "ctas": [
+      "Get started",
+      "Schedule Appointment",
+      "Contact us",
+      "Submit",
+      "Notify me",
+      "Make an Appointment"
+    ],
+    "suppliers": [
+      "Box.com",
+      "Google",
+      "Rackspace",
+      "DialogTech",
+      "Wufoo.com",
+      "Sendgrid",
+      "Twilio",
+      "Plausible",
+      "Amazon Web Services",
+      "Yext",
+      "MailGun",
+      "Bright Local",
+      "TransUnion"
+    ]
+  },
+  "brandingAndStyle": {
+    "writingStyle": "Professional, reassuring, and client-focused. The language is clear and accessible, aimed at explaining complex tax and accounting concepts to individuals and small business owners. The tone is expert and trustworthy, highlighting experience and reliability to build confidence.",
+    "artStyle": "Minimalist and professional",
+    "fonts": [
+      "Inter"
+    ],
+    "colors": [
+      "#8a8a8a",
+      "#202938",
+      "#f9fafc"
+    ],
+    "logos": [
+      "https://cdn.brandfetch.io/idgkRfawcH/w/256/logo.png"
+    ]
+  },
+  "onlinePresence": {
+    "linkedin": "https://linkedin.com/company/account-it-consulting-services",
+    "facebook": "https://facebook.com/account.itconsulting",
+    "twitter": null,
+    "instagram": null,
+    "youtube": null,
+    "tiktok": null,
+    "other": {
+      "phone": "(561) 555-0123"
+    }
+  },
+  "keyPeople": [
+    {
+      "name": "Doug Cohen",
+      "title": "Founder and CPA",
+      "role": "CEO",
+      "gender": "Male",
+      "description": "Founder of Account-it Consulting Services, LLC, with a career that includes over 14 years as a CFO and controller, as well as experience in public accounting. He is a CPA, a member of the AICPA, and a QuickBooks Certified ProAdvisor.",
+      "linkedinUrl": null
+    }
+  ],
+  "offerings": [
+    {
+      "name": "Tax Preparation & Planning",
+      "category": "Tax Services",
+      "features": [
+        "Individual, business, gift & estate, partnership, corporate, and out-of-state returns",
+        "Tax planning to minimize liability and maximize after-tax income",
+        "Comprehensive approach to identify overlooked deductions and credits"
+      ],
+      "description": "Professional tax preparation services for individuals and businesses. The service aims to simplify the complex tax code, identify overlooked deductions and credits, and ensure compliance.",
+      "pricing": "Custom quote"
+    },
+    {
+      "name": "Estate, Gift & Trust Return Preparation",
+      "category": "Tax Services",
+      "features": [
+        "Ensures compliance for fiduciaries and beneficiaries",
+        "Part of comprehensive tax preparation offerings",
+        "Specialized services for complex return types"
+      ],
+      "description": "Specialized tax preparation services for filing estate, gift, and trust returns.",
+      "pricing": "Custom quote"
+    },
+    {
+      "name": "QuickBooks Services",
+      "category": "Business Services",
+      "features": [
+        "QuickBooks setup and configuration",
+        "Employee training",
+        "Ongoing support for questions (QuickAnswers)",
+        "Problem-solving services (QuickTuneup)"
+      ],
+      "description": "Expert assistance with QuickBooks to improve business efficiency and accuracy. The firm is a QuickBooks Certified ProAdvisor.",
+      "pricing": "Monthly retainer or per-service"
+    },
+    {
+      "name": "Payroll Services",
+      "category": "Business Services",
+      "features": [
+        "Manages all payroll duties",
+        "Monitors federal, state, and local tax laws",
+        "Ensures secure data handling and transmission"
+      ],
+      "description": "Comprehensive payroll solutions for Florida businesses. Clients provide employee data, and the firm handles the rest.",
+      "pricing": "Monthly per-employee pricing"
+    },
+    {
+      "name": "IRS Tax Problem Resolution",
+      "category": "IRS Representation",
+      "features": [
+        "Assistance with wage garnishments, bank levies, threatening letters",
+        "IRS audit representation",
+        "Non-filing issue resolution",
+        "Lien and offer-in-compromise assistance",
+        "Innocent spouse relief"
+      ],
+      "description": "Helps individuals and businesses resolve tax problems with the IRS. The service is efficient, affordable, and discrete.",
+      "pricing": "Custom quote based on complexity"
+    },
+    {
+      "name": "Part-time/Interim CFO and Controller Services",
+      "category": "Financial Consulting",
+      "features": [
+        "High-level financial and accounting support on as-needed basis",
+        "Avoids cost of full-time executive salary",
+        "CFO and Controller expertise for strategic guidance"
+      ],
+      "description": "Offers the expertise of a qualified CFO and Controller without the full-time salary. This service is for businesses needing strategic financial guidance and oversight.",
+      "pricing": "Hourly or retainer-based"
+    },
+    {
+      "name": "Accounting & Bookkeeping",
+      "category": "Business Services",
+      "features": [
+        "Professional with 40 years of public accounting and CFO experience",
+        "Basic accounting and bookkeeping for smaller companies",
+        "Accurate financial record maintenance"
+      ],
+      "description": "Basic accounting and bookkeeping services for smaller companies. Ensures financial records are accurately maintained by an experienced CPA.",
+      "pricing": "Monthly retainer"
+    },
+    {
+      "name": "Business Start-Up Services",
+      "category": "Business Services",
+      "features": [
+        "Complete list of commonly overlooked deductions",
+        "Help limit tax liability from the start",
+        "Specialized tax planning and education for new businesses"
+      ],
+      "description": "Specialized tax planning and education services to assist start-ups. Helps new businesses navigate tax compliance and implement tax-saving strategies.",
+      "pricing": "One-time setup + ongoing services"
+    }
+  ],
+  "thinkBigger": {
+    "contentThemes": [
+      "tax compliance",
+      "stress relief",
+      "financial planning",
+      "business guidance",
+      "payroll simplification",
+      "cfo expertise",
+      "tax savings"
+    ],
+    "uniqueSellingPropositions": [
+      "14+ years CFO/Controller experience at founder level",
+      "Professional, timely, and reliable solutions",
+      "Expertise beyond simple accounting - strategic business guidance",
+      "QuickBooks Certified ProAdvisor",
+      "Discrete and efficient IRS representation",
+      "Part-time CFO services without full executive overhead"
+    ],
+    "testimonials": null,
+    "certifications": [
+      "CPA (Certified Public Accountant)",
+      "AICPA Member",
+      "QuickBooks Certified ProAdvisor"
+    ],
+    "faqs": null,
+    "competitorInfo": null,
+    "mediaCovers": null,
+    "communityValues": "Hands-on, personalized approach; commitment to client success over transaction volume"
+  },
+  "scrapedAt": "2024-10-11T18:45:30.000Z",
+  "updatedAt": "2024-10-11T18:47:15.000Z",
+  "confidenceScore": 0.82
+}
