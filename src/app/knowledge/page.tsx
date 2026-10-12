@@ -10,7 +10,7 @@ import { Knowledge } from "@/types/knowledge";
 type PageStep = "form" | "display" | "edit";
 
 export default function KnowledgePage() {
-  const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
+  const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, knowledgeList, isLoading, error, setError, setIsLoading } = useKnowledge();
   const [step, setStep] = useState<PageStep>("form");
 
   // When currentKnowledge changes and we navigate here (from /view for editing),
@@ -31,10 +31,14 @@ export default function KnowledgePage() {
   };
 
   const handleSave = (knowledge: Knowledge) => {
-    // If editing existing, update; otherwise add new
-    if (currentKnowledge && currentKnowledge.id === knowledge.id) {
+    // Check if this knowledge base already exists in the list
+    const exists = knowledgeList.some((k) => k.id === knowledge.id);
+
+    if (exists) {
+      // Update existing knowledge base
       updateKnowledge(knowledge);
     } else {
+      // Add new knowledge base
       addKnowledge(knowledge);
     }
     setStep("form");
