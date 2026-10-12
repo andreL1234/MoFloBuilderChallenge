@@ -1,8 +1,13 @@
 import { Knowledge, CompanyFoundation, Positioning, MarketAndCustomers, BrandingAndStyle, OnlinePresence } from "@/types/knowledge";
 
-// Simple HTML text extraction
+// Simple HTML text extraction - removes script and style tags
 function extractText(html: string): string {
   const doc = new DOMParser().parseFromString(html, "text/html");
+
+  // Remove script and style tags to avoid extracting CSS/JS
+  const scripts = doc.querySelectorAll("script, style, meta, link, noscript");
+  scripts.forEach(script => script.remove());
+
   return doc.body.textContent || "";
 }
 
@@ -183,8 +188,19 @@ export function parseWebsite(html: string, url: string): Knowledge {
     companyRole: "Service Provider",
   };
 
+  // Extract better pitch text - find substantive paragraphs
+  const textLines = allText
+    .split("\n")
+    .map(line => line.trim())
+    .filter(line => line.length > 30 && line.length < 300 && !line.match(/^[0-9]+$/));
+
+  // Take the first substantive paragraph (usually the intro)
+  const pitchText = textLines.length > 0
+    ? textLines[0].substring(0, 400)
+    : metadata.description || "Company information from website";
+
   const positioning: Positioning = {
-    pitch: allText.substring(0, 500),
+    pitch: pitchText,
   };
 
   const marketAndCustomers: MarketAndCustomers = {
@@ -207,6 +223,16 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const now = new Date().toISOString();
   const id = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
+  // Calculate confidence score based on what was extracted
+  let confidence = 0.5;
+  if (metadata.description) confidence += 0.1;
+  if (socialLinks.linkedin || socialLinks.facebook) confidence += 0.1;
+  if (logos.length > 0) confidence += 0.05;
+  if (colors.length > 0) confidence += 0.05;
+  if (themes.length > 0) confidence += 0.1;
+  if (usps.length > 0) confidence += 0.1;
+  confidence = Math.min(confidence, 0.95); // Cap at 0.95
+
   return {
     id,
     sourceUrl: url,
@@ -224,6 +250,6 @@ export function parseWebsite(html: string, url: string): Knowledge {
     },
     scrapedAt: now,
     updatedAt: now,
-    confidenceScore: 0.6,
+    confidenceScore: confidence,
   };
 }

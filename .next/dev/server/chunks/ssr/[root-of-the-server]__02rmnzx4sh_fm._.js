@@ -62,28 +62,44 @@ function KnowledgeProvider({ children }) {
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [isHydrated, setIsHydrated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const hasLoadedRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(false);
     // Load from localStorage on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
         ;
     }, []);
-    // Save to localStorage when list changes
+    // Save to localStorage when list changes (but skip initial load)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if ("TURBOPACK compile-time falsy", 0) //TURBOPACK unreachable
         ;
     }, [
-        knowledgeList,
+        knowledgeList
+    ]);
+    // Mark that we've loaded initial data
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        hasLoadedRef.current = true;
+    }, [
         isHydrated
     ]);
     const addKnowledge = (knowledge)=>{
-        setKnowledgeList((prev)=>[
+        console.log("Adding knowledge:", knowledge);
+        setKnowledgeList((prev)=>{
+            const updated = [
                 ...prev,
                 knowledge
-            ]);
+            ];
+            console.log("Knowledge list after add:", updated);
+            return updated;
+        });
         setCurrentKnowledge(null);
     };
     const updateKnowledge = (knowledge)=>{
-        setKnowledgeList((prev)=>prev.map((k)=>k.id === knowledge.id ? knowledge : k));
+        console.log("Updating knowledge:", knowledge);
+        setKnowledgeList((prev)=>{
+            const updated = prev.map((k)=>k.id === knowledge.id ? knowledge : k);
+            console.log("Knowledge list after update:", updated);
+            return updated;
+        });
         setCurrentKnowledge(null);
     };
     const deleteKnowledge = (id)=>{
@@ -108,7 +124,7 @@ function KnowledgeProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/KnowledgeContext.tsx",
-        lineNumber: 87,
+        lineNumber: 101,
         columnNumber: 5
     }, this);
 }

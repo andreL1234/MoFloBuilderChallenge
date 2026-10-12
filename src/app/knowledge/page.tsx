@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useKnowledge } from "@/context/KnowledgeContext";
 import KnowledgeForm from "@/components/KnowledgeForm";
 import KnowledgeDisplay from "@/components/KnowledgeDisplay";
@@ -10,8 +10,16 @@ import { Knowledge } from "@/types/knowledge";
 type PageStep = "form" | "display" | "edit";
 
 export default function KnowledgePage() {
-  const { setCurrentKnowledge, currentKnowledge, addKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
+  const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, knowledgeList, isLoading, error, setError, setIsLoading } = useKnowledge();
   const [step, setStep] = useState<PageStep>("form");
+
+  // When currentKnowledge changes and we navigate here (from /view for editing),
+  // start with display step. Otherwise stay in form for new scrapes.
+  useEffect(() => {
+    if (currentKnowledge && step === "form") {
+      setStep("display");
+    }
+  }, [currentKnowledge]);
 
   const handleScraped = (knowledge: Knowledge) => {
     setCurrentKnowledge(knowledge);
@@ -23,7 +31,16 @@ export default function KnowledgePage() {
   };
 
   const handleSave = (knowledge: Knowledge) => {
-    addKnowledge(knowledge);
+    // Check if this knowledge base already exists in the list
+    const exists = knowledgeList.some((k) => k.id === knowledge.id);
+
+    if (exists) {
+      // Update existing knowledge base
+      updateKnowledge(knowledge);
+    } else {
+      // Add new knowledge base
+      addKnowledge(knowledge);
+    }
     setStep("form");
     alert("Knowledge base saved successfully!");
   };

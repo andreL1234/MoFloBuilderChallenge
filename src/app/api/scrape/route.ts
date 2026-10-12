@@ -43,11 +43,18 @@ export async function POST(request: NextRequest) {
     const html = await response.text();
     return NextResponse.json({ html });
   } catch (error) {
+    console.error("API scrape error:", error);
     if (error instanceof Error) {
       if (error.name === "AbortError") {
         return NextResponse.json(
           { error: "Request timeout - website took too long to respond" },
           { status: 408 }
+        );
+      }
+      if (error.message.includes("fetch")) {
+        return NextResponse.json(
+          { error: `Network error: ${error.message}` },
+          { status: 503 }
         );
       }
       return NextResponse.json(
