@@ -42,6 +42,12 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/api/scrape",
+      "regex": "^/api/scrape(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/scrape(?:/)?$"
+    },
+    {
       "page": "/knowledge",
       "regex": "^/knowledge(?:/)?$",
       "routeKeys": {},
