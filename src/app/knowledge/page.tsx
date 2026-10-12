@@ -10,8 +10,12 @@ import { Knowledge } from "@/types/knowledge";
 type PageStep = "form" | "display" | "edit";
 
 export default function KnowledgePage() {
-  const { setCurrentKnowledge, currentKnowledge, addKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
-  const [step, setStep] = useState<PageStep>("form");
+  const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
+  const [step, setStep] = useState<PageStep>(() => {
+    // If we have currentKnowledge (editing), start with display
+    // Otherwise start with form (creating new)
+    return currentKnowledge ? "display" : "form";
+  });
 
   const handleScraped = (knowledge: Knowledge) => {
     setCurrentKnowledge(knowledge);
@@ -23,7 +27,12 @@ export default function KnowledgePage() {
   };
 
   const handleSave = (knowledge: Knowledge) => {
-    addKnowledge(knowledge);
+    // If editing existing, update; otherwise add new
+    if (currentKnowledge && currentKnowledge.id === knowledge.id) {
+      updateKnowledge(knowledge);
+    } else {
+      addKnowledge(knowledge);
+    }
     setStep("form");
     alert("Knowledge base saved successfully!");
   };
