@@ -175,3 +175,88 @@
 {"timestamp":"01:41:48.373","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
 {"timestamp":"01:41:48.373","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
 {"timestamp":"01:42:27.536","source":"Server","level":"LOG","message":"✓ Compiled in 133ms"}
+{"timestamp":"01:43:07.029","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:07.073","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:07.073","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:07.073","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:13.657","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:14.400","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:14.441","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:14.441","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:14.441","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:16.376","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:16.417","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:16.417","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:16.417","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:17.109","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:17.153","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:17.153","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:17.153","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:21.893","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:21.937","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:21.937","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:21.937","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:28.681","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:43:29.860","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:43:29.901","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:29.901","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:43:29.901","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:44:02.236","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:44:02.304","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:02.304","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:02.310","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:44:03.517","source":"Browser","level":"ERROR","message":"Scraping error: Error: Failed to parse URL from https:// beecavedrilling.com\n    at fetchUrl (src/utils/scraper.ts:14:13)\n    at async handleSubmit (src/components/KnowledgeForm.tsx:54:20)\n  12 |     if (!response.ok) {\n  13 |       const error = await response.json();\n> 14 |       throw new Error(error.error || `HTTP ${response.status}`);\n     |             ^\n  15 |     }\n  16 |\n  17 |     const data = await response.json(); (src/components/KnowledgeForm.tsx:61:15)"}
+{"timestamp":"01:44:03.519","source":"Server","level":"ERROR","message":"[browser] \"Scraping error:\" \"Error: Failed to parse URL from https:// beecavedrilling.com\\n    at fetchUrl (src/utils/scraper.ts:14:13)\\n    at async handleSubmit (src/components/KnowledgeForm.tsx:54:20)\\n  12 |     if (!response.ok) {\\n  13 |       const error = await response.json();\\n> 14 |       throw new Error(error.error || `HTTP ${response.status}`);\\n     |             ^\\n  15 |     }\\n  16 |\\n  17 |     const data = await response.json();\" \"(src/components/KnowledgeForm.tsx:61:15)\""}
+{"timestamp":"01:44:26.443","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:44:28.874","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:44:28.997","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:28.997","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:28.997","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:44:32.762","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:44:32.885","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:32.885","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:44:32.885","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:44:34.481","source":"Browser","level":"ERROR","message":"Scraping error: Error: Failed to parse URL from https:// beecavedrilling.com\n    at fetchUrl (src/utils/scraper.ts:14:13)\n    at async handleSubmit (src/components/KnowledgeForm.tsx:54:20)\n  12 |     if (!response.ok) {\n  13 |       const error = await response.json();\n> 14 |       throw new Error(error.error || `HTTP ${response.status}`);\n     |             ^\n  15 |     }\n  16 |\n  17 |     const data = await response.json(); (src/components/KnowledgeForm.tsx:61:15)"}
+{"timestamp":"01:44:34.481","source":"Server","level":"ERROR","message":"[browser] \"Scraping error:\" \"Error: Failed to parse URL from https:// beecavedrilling.com\\n    at fetchUrl (src/utils/scraper.ts:14:13)\\n    at async handleSubmit (src/components/KnowledgeForm.tsx:54:20)\\n  12 |     if (!response.ok) {\\n  13 |       const error = await response.json();\\n> 14 |       throw new Error(error.error || `HTTP ${response.status}`);\\n     |             ^\\n  15 |     }\\n  16 |\\n  17 |     const data = await response.json();\" \"(src/components/KnowledgeForm.tsx:61:15)\""}
+{"timestamp":"01:45:38.148","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:45:38.285","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:45:38.285","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:45:38.290","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:45:49.731","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:45:52.881","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:45:52.966","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:45:52.966","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:45:52.969","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:18.314","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"01:46:18.352","source":"Server","level":"LOG","message":"✓ Compiled in 31ms"}
+{"timestamp":"01:46:18.921","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:46:19.061","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:19.061","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:19.061","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:39.865","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"01:46:39.934","source":"Server","level":"LOG","message":"✓ Compiled in 25ms"}
+{"timestamp":"01:46:40.364","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:46:40.513","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:40.513","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:40.513","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:51.764","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"01:46:51.833","source":"Server","level":"LOG","message":"✓ Compiled in 25ms"}
+{"timestamp":"01:46:52.327","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:46:52.409","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:52.409","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:52.409","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:52.447","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:58.140","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"01:46:58.209","source":"Server","level":"LOG","message":"✓ Compiled in 69ms"}
+{"timestamp":"01:46:58.643","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:46:58.779","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:58.779","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:46:58.779","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:46:58.784","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:47:01.037","source":"Server","level":"WARN","message":"⚠ Fast Refresh had to perform a full reload when ./src/context/KnowledgeContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload"}
+{"timestamp":"01:47:01.103","source":"Server","level":"LOG","message":"✓ Compiled in 19ms"}
+{"timestamp":"01:47:01.558","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"01:47:01.691","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:47:01.691","source":"Browser","level":"LOG","message":"Loaded knowledge list from localStorage: []"}
+{"timestamp":"01:47:01.691","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}
+{"timestamp":"01:47:01.708","source":"Browser","level":"LOG","message":"Saved knowledge list to localStorage: []"}

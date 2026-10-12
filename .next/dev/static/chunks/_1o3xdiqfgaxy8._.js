@@ -1513,6 +1513,7 @@ function KnowledgeProvider({ children }) {
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [isHydrated, setIsHydrated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const hasLoadedRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(false);
     // Load from localStorage on mount
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "KnowledgeProvider.useEffect": ()=>{
@@ -1533,10 +1534,10 @@ function KnowledgeProvider({ children }) {
             }
         }
     }["KnowledgeProvider.useEffect"], []);
-    // Save to localStorage when list changes
+    // Save to localStorage when list changes (but skip initial load)
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "KnowledgeProvider.useEffect": ()=>{
-            if (("TURBOPACK compile-time value", "object") !== "undefined" && isHydrated) {
+            if (("TURBOPACK compile-time value", "object") !== "undefined" && hasLoadedRef.current) {
                 try {
                     localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
                     console.log("Saved knowledge list to localStorage:", knowledgeList);
@@ -1546,18 +1547,35 @@ function KnowledgeProvider({ children }) {
             }
         }
     }["KnowledgeProvider.useEffect"], [
-        knowledgeList,
+        knowledgeList
+    ]);
+    // Mark that we've loaded initial data
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "KnowledgeProvider.useEffect": ()=>{
+            hasLoadedRef.current = true;
+        }
+    }["KnowledgeProvider.useEffect"], [
         isHydrated
     ]);
     const addKnowledge = (knowledge)=>{
-        setKnowledgeList((prev)=>[
+        console.log("Adding knowledge:", knowledge);
+        setKnowledgeList((prev)=>{
+            const updated = [
                 ...prev,
                 knowledge
-            ]);
+            ];
+            console.log("Knowledge list after add:", updated);
+            return updated;
+        });
         setCurrentKnowledge(null);
     };
     const updateKnowledge = (knowledge)=>{
-        setKnowledgeList((prev)=>prev.map((k)=>k.id === knowledge.id ? knowledge : k));
+        console.log("Updating knowledge:", knowledge);
+        setKnowledgeList((prev)=>{
+            const updated = prev.map((k)=>k.id === knowledge.id ? knowledge : k);
+            console.log("Knowledge list after update:", updated);
+            return updated;
+        });
         setCurrentKnowledge(null);
     };
     const deleteKnowledge = (id)=>{
@@ -1582,11 +1600,11 @@ function KnowledgeProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/KnowledgeContext.tsx",
-        lineNumber: 87,
+        lineNumber: 101,
         columnNumber: 5
     }, this);
 }
-_s(KnowledgeProvider, "VD6fibYfS8XAJCbBLvBKZctV900=");
+_s(KnowledgeProvider, "rezIl+c/X4reV3FsBh13NBg+ZAc=");
 _c = KnowledgeProvider;
 function useKnowledge() {
     _s1();

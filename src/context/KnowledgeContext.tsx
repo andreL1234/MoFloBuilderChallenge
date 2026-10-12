@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { Knowledge } from "@/types/knowledge";
 
 interface KnowledgeContextType {
@@ -32,6 +32,7 @@ export function KnowledgeProvider({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -52,9 +53,9 @@ export function KnowledgeProvider({
     }
   }, []);
 
-  // Save to localStorage when list changes
+  // Save to localStorage when list changes (but skip initial load)
   useEffect(() => {
-    if (typeof window !== "undefined" && isHydrated) {
+    if (typeof window !== "undefined" && hasLoadedRef.current) {
       try {
         localStorage.setItem("knowledgeList", JSON.stringify(knowledgeList));
         console.log("Saved knowledge list to localStorage:", knowledgeList);
@@ -62,17 +63,30 @@ export function KnowledgeProvider({
         console.error("Failed to save to localStorage:", err);
       }
     }
-  }, [knowledgeList, isHydrated]);
+  }, [knowledgeList]);
+
+  // Mark that we've loaded initial data
+  useEffect(() => {
+    hasLoadedRef.current = true;
+  }, [isHydrated]);
 
   const addKnowledge = (knowledge: Knowledge) => {
-    setKnowledgeList((prev) => [...prev, knowledge]);
+    console.log("Adding knowledge:", knowledge);
+    setKnowledgeList((prev) => {
+      const updated = [...prev, knowledge];
+      console.log("Knowledge list after add:", updated);
+      return updated;
+    });
     setCurrentKnowledge(null);
   };
 
   const updateKnowledge = (knowledge: Knowledge) => {
-    setKnowledgeList((prev) =>
-      prev.map((k) => (k.id === knowledge.id ? knowledge : k))
-    );
+    console.log("Updating knowledge:", knowledge);
+    setKnowledgeList((prev) => {
+      const updated = prev.map((k) => (k.id === knowledge.id ? knowledge : k));
+      console.log("Knowledge list after update:", updated);
+      return updated;
+    });
     setCurrentKnowledge(null);
   };
 
