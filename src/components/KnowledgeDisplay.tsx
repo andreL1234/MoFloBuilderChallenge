@@ -82,8 +82,6 @@ export default function KnowledgeDisplay({ knowledge }: { knowledge: Knowledge }
 
   return (
     <div className="space-y-6 animate-fade-up">
-      <BrandIdentity knowledge={knowledge} />
-
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionCard title="Company foundation" description={foundation.overview}>
           <dl className="divide-y divide-line">
@@ -262,6 +260,8 @@ export default function KnowledgeDisplay({ knowledge }: { knowledge: Knowledge }
           </dl>
         </SectionCard>
       )}
+
+      <BrandIdentity knowledge={knowledge} />
 
       <p className="text-center text-xs text-muted">
         Scraped {new Date(knowledge.scrapedAt).toLocaleString()}
