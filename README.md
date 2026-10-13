@@ -1,384 +1,179 @@
-# MoKnowledge - Company Knowledge Base Builder
+# MoKnowledge
 
-A web-based tool that scrapes company websites and transforms extracted data into structured, comprehensive knowledge bases for AI-powered content generation.
+MoKnowledge turns a company's website into a structured knowledge base: who they are, what they sell, who they sell to, how they talk, and what their brand looks like. MoFlo's apps (MoSocial, MoMail, MoBlogs) would use this knowledge base to write on-brand content for that business.
 
-## Overview
+You type in a website, the app reads it, shows you what it found, lets you fix anything, and saves it as JSON.
 
-MoKnowledge is a critical part of the MoFlo Cloud platform. It automates the initial data collection when new customers sign up, building the foundation that powers all downstream applications (MoSocial, MoMail, MoBlogs).
-
-**Key Features:**
-- Real website scraping with intelligent HTML parsing
-- Structured data extraction across multiple business dimensions
-- Interactive UI for review, editing, and enhancement
-- JSON export for integration with backend systems
-- localStorage persistence for current session
-- Multiple view modes (cards, table, detail)
-- Search and filter functionality
-
-## Tech Stack
-
-- **Framework:** Next.js 15 with App Router
-- **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS v4
-- **State Management:** React Context + Hooks
-- **Storage:** localStorage (JSON serialized)
-
-## Project Structure
-
-```
-src/
-├── app/
-│   ├── layout.tsx              # Root layout with navigation
-│   ├── page.tsx                # Home/landing page
-│   ├── globals.css             # Global styles
-│   └── knowledge/
-│       ├── page.tsx            # Build/Scrape page
-│       └── view/
-│           └── page.tsx        # View/Manage page
-├── components/
-│   ├── KnowledgeForm.tsx       # URL input & scrape trigger
-│   ├── KnowledgeDisplay.tsx    # Structured results display
-│   ├── KnowledgeEditor.tsx     # Edit interface with JSON preview
-│   └── KnowledgeList.tsx       # Browse/manage saved bases
-├── types/
-│   └── knowledge.ts            # Complete TypeScript schema
-├── utils/
-│   ├── scraper.ts             # HTML fetch with error handling
-│   ├── parser.ts              # HTML parsing & data extraction
-│   └── storage.ts             # localStorage persistence & export
-└── context/
-    └── KnowledgeContext.tsx    # State management provider
-```
-
-## Setup & Installation
-
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-```bash
-# Clone and install dependencies
-git clone <repo-url>
-cd MoFloBuilderChallenge
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
-
-The app will be available at `http://localhost:3000`
-
-## Usage
-
-### Building a Knowledge Base
-
-1. Navigate to `/knowledge` (or click "Build" in navigation)
-2. Enter a company website URL
-3. Click "Scrape" to extract data
-4. Review the extracted information
-5. Click "Edit & Save" to modify and finalize
-6. Download JSON or save to knowledge base
-
-### Viewing & Managing
-
-1. Navigate to `/knowledge/view` (or click "View" in navigation)
-2. Use search/filter to find knowledge bases
-3. Switch between view modes: Cards, Table, or Detail
-4. Edit, export, or delete knowledge bases
-
-## Knowledge Base Schema
-
-### Core Categories (Baseline)
-
-**Company Foundation**
-- Overview/description
-- Website, industry, business model, company role
-- Year founded, legal entity type, employee count
-- Addresses and service locations
-- Alternative company names
-
-**Positioning**
-- Company pitch (compelling summary)
-- Founding story
-
-**Market & Customers**
-- Target buyer personas
-- Customer needs and pain points
-- Ideal customer description
-- Industry groupings
-- Channels, funnels, CTAs
-- Suppliers/partners
-
-**Branding & Style**
-- Writing style (tone, voice, language patterns)
-- Art style description
-- Font families
-- Brand colors (hex values)
-- Logo URLs
-
-**Online Presence**
-- Social media links (LinkedIn, Facebook, Twitter/X, Instagram, YouTube, TikTok)
-
-**Key People**
-- Names, titles, roles, gender
-- Background descriptions
-- LinkedIn profiles
-
-**Offerings**
-- Products/services with descriptions
-- Features and pricing
-- Service categorization
-
-### "Think Bigger" Extensions
-
-These fields add value across all downstream applications:
-
-**Content Themes & Topics**
-- Recurring keywords and topics from website content
-- Helps MoSocial/MoMail/MoBlogs align with company messaging
-
-**Unique Selling Propositions**
-- Competitive differentiators extracted from positioning
-- Key benefits and value drivers
-- Supports messaging consistency
-
-*(Future enhancements: Testimonials/reviews, Awards/certifications, FAQs, Community values)*
-
-## Scraping Approach
-
-### Architecture
-
-The scraping is implemented as a **server-side API route** (`/api/scrape`):
-
-1. **Client submits URL** - User enters website in form
-2. **API Route processes** - Server-side Next.js route (`src/app/api/scrape/route.ts`) handles the fetch
-3. **Server fetches HTML** - No CORS restrictions (server-to-server is unrestricted)
-4. **Client receives HTML** - Response sent back to browser as JSON
-5. **Parser extracts data** - Client-side parsing logic processes the HTML
-6. **Results displayed** - User sees structured knowledge base fields
-
-**Why server-side?** Browsers block direct fetches to external sites (CORS policy). The server has no such restrictions, so the API route acts as a proxy that the browser can call safely.
-
-### Extraction Strategy
-
-The scraper extracts data using multiple signals:
-
-1. **Metadata Extraction** - Title, descriptions, OG tags
-2. **Social Media Detection** - Identifies links to social platforms
-3. **Logo Extraction** - Finds company logos from image alt text
-4. **Color Extraction** - Parses CSS for brand colors
-5. **Content Analysis** - Text parsing for themes and USPs
-6. **Phone Number Extraction** - Regex-based contact detection
-
-### Fallback Strategies
-
-When specific information isn't available:
-- Confidence scores indicate data quality
-- "Unknown" values for missing fields
-- Empty arrays for multi-item fields
-- Original website URL preserved for reference
-- Timestamp for data freshness tracking
-
-### Data Quality
-
-- **Confidence Score:** Estimate of extraction reliability (0-1)
-- **Source Tracking:** Original URL stored with every knowledge base
-- **Timestamp:** Both scrape time and last update time recorded
-
-## Prompting Strategy for LLM Enrichment
-
-The schema is designed to feed into LLM prompts for content generation. Example prompts:
-
-### Prompt 1: Generate Company Pitch
-
-```
-Based on the company's website content and values, generate a compelling 
-2-3 sentence pitch that a potential customer would find persuasive.
-
-Company Overview: {foundation.overview}
-Content Themes: {thinkBigger.contentThemes}
-USPs: {thinkBigger.uniqueSellingPropositions}
-
-Pitch should be professional, highlight unique value, and avoid generic language.
-```
-
-### Prompt 2: Extract Writing Style Profile
-
-```
-Analyze the following website content and describe the company's brand voice.
-Identify: tone, language formality, key phrases, personality traits.
-
-Website Content: {extracted_text}
-
-Output should be 2-3 sentences describing the writing style for consistency 
-across social media and email content.
-```
-
-### Prompt 3: Identify Target Persona Messaging
-
-```
-Based on the company information, describe the ideal customer persona 
-and what messaging resonates with them.
-
-Market Data: {marketAndCustomers}
-Offerings: {offerings}
-Pitch: {positioning.pitch}
-
-Focus on pain points, values, and motivations that should drive content creation.
-```
-
-## Data Quality Thinking
-
-### Handling Incomplete Data
-
-1. **Partial Extraction:** Confidence score reflects what was found
-2. **Manual Enhancement:** Editor allows adding missing data
-3. **Validation:** Key fields have sensible defaults
-4. **Transparency:** Timestamps and source URLs help track data origin
-
-### Validation Rules
-
-- Company name: Required (from title tag or domain)
-- Website URL: Required and validated before scraping
-- Overview: Filled with description or first content
-- Foundation fields: Default to "Unknown" if not found
-- Arrays: Default to empty `[]` if not found
-
-## Knowledge Enrichment Ideas (Future Work)
-
-Beyond the baseline schema, consider adding:
-
-1. **Competitor Analysis**
-   - Direct competitors identified from website
-   - Market positioning relative to competitors
-
-2. **Customer Success Metrics**
-   - ROI/results mentioned in case studies
-   - Key performance indicators tracked
-
-3. **Industry Benchmarks**
-   - Industry standards for pricing/service levels
-   - Growth trends and market outlook
-
-4. **Content Calendar Signals**
-   - Blog frequency and topics
-   - Seasonal patterns in messaging
-   - Launch/campaign announcements
-
-5. **Compliance & Trust Signals**
-   - Certifications and awards
-   - Privacy policies and data handling
-   - Industry compliance mentions
-
-6. **Financial Indicators**
-   - Funding information if public
-   - Pricing model (freemium, subscription, one-time)
-   - Package tiers and upgrade paths
-
-## Assumptions & Limitations
-
-### Assumptions
-
-1. **Websites are publicly accessible** - No authentication required
-2. **Content is in English** - Text analysis optimized for English
-3. **Data extraction is best-effort** - Websites vary in structure
-4. **Single-session storage** - localStorage for MVP, not production persistence
-5. **No external API calls** - All processing client-side or via simple fetch
-
-### Limitations
-
-1. **Timeout of 15 seconds** - Very large or slow websites may timeout
-2. **JavaScript-rendered content** - Only fetches HTML, no client-side JS execution
-3. **Rate limiting** - No built-in rate limiting for production use
-4. **Authentication-required content** - Cannot scrape behind login
-5. **Single-pass parsing** - No multi-depth crawling across site
-6. **Storage capacity** - localStorage has ~5-10MB limit per domain
-7. **No request caching** - Each scrape fetches fresh HTML (no cache layer)
-
-## How This Schema Improves Downstream Applications
-
-### MoSocial (Social Content Generation)
-
-- **Content Themes:** Identifies topics the company discusses → relevant social posts
-- **USPs:** Extracts key benefits → compelling social claims
-- **Branding:** Colors/fonts → visual consistency
-- **CTAs:** Discovers action prompts → native social calls-to-action
-
-### MoMail (Email Content Generation)
-
-- **Pitch:** Foundation for email subject lines and hooks
-- **Market & Customers:** Identifies ideal audience and pain points
-- **Offerings:** Generates product-focused email flows
-- **Online Presence:** Links for email footer/social proof
-
-### MoBlogs (Blog Content Generation)
-
-- **Content Themes:** Suggests blog topics aligned with company voice
-- **Industry Groupings:** Identifies relevant industry trends
-- **Key People:** Sources for expert bio sections
-- **Founding Story:** Long-form content opportunity
-
-## Future Improvements (If More Time)
-
-1. **Supabase Integration**
-   - Persistent database for multi-session use
-   - Row-level security for multi-tenant access
-   - Version control for knowledge base updates
-
-2. **Advanced Scraping**
-   - JavaScript rendering for dynamic content
-   - Multi-page crawling
-   - Media extraction (images, videos)
-
-3. **AI Enrichment**
-   - Live LLM API integration for enhanced extraction
-   - Automatic field completion and classification
-   - Content summarization
-
-4. **Import/Export**
-   - Bulk upload from CSV/spreadsheet
-   - Sync with CRM systems
-   - API endpoint for programmatic access
-
-5. **Collaboration**
-   - Multi-user editing with version history
-   - Comments and annotations on fields
-   - Approval workflows
-
-6. **Analytics**
-   - Track which fields are most commonly edited
-   - Identify patterns in data quality
-   - Performance metrics on scraping accuracy
-
-## Testing
-
-The application has been tested with:
-- Form validation (URL format, empty input)
-- Error handling (network timeouts, invalid URLs)
-- localStorage persistence (reload page)
-- Multiple view modes and search/filter
-- TypeScript strict mode compliance
-- Responsive design on mobile/tablet/desktop
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## License
-
-ISC
+![Home page](screenshots/01-home.png)
 
 ---
 
-**Questions Answered:** See `QUESTIONS.md` for responses to assignment requirements.
+## Run it
+
+Requires Node.js 20 or newer.
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000. No API keys or database needed. Knowledge bases are saved in your browser.
+
+---
+
+## What it does
+
+**Build page (`/knowledge`)**
+- Enter one website, or switch to **Batch** and paste a list.
+- A progress message shows which pages are being read.
+- Review everything that was found, organized by category.
+- Edit any field (lists, people, offerings, FAQs included), then save.
+
+**Knowledge bases page (`/knowledge/view`)**
+- Card view and table view, with search and filters (industry, business model, completeness).
+- Click any company for its full profile page, including logos, brand colors, and fonts.
+- Edit, duplicate, delete, export JSON or CSV, and import JSON.
+
+| Review results | Full profile | Library |
+|---|---|---|
+| ![](screenshots/03-review-results.png) | ![](screenshots/05-knowledge-base-detail.png) | ![](screenshots/07-library-cards.png) |
+
+More in [`screenshots/`](screenshots).
+
+---
+
+## How the scraping works
+
+Four steps, each in its own file:
+
+1. **Fetch** (`src/app/api/scrape/route.ts`, `src/utils/scraper.ts`)
+   The browser can't download other websites directly (CORS), so a small server route fetches the HTML. The app reads the homepage, then finds up to 5 more useful pages from its links: About, Services, Contact, Team, FAQ, and Reviews. That's where addresses, staff, and founding stories usually live.
+
+2. **Extract** (`src/utils/extract/`)
+   Each page is parsed once, and small focused functions pull out one kind of data each:
+   - `structuredData.ts` reads schema.org data many sites embed for Google. It's the most reliable source for address, phone, founding date, FAQs, and reviews.
+   - `contact.ts`: phones (from `tel:` links), emails, addresses, service areas, social profiles
+   - `company.ts`: founding year and story, legal entity (LLC, Inc.), CTAs, headlines, trust signals
+   - `offerings.ts`: services/products from the menu's "Services" dropdown and service sections
+   - `people.ts`: team members and titles
+   - `socialProof.ts`: testimonials, FAQs, ratings
+   - `brand.ts`: logos, brand colors, fonts
+   - `style.ts`: writing style (sentence length, "you" vs "we") and art style (palette, fonts, imagery)
+
+3. **Classify** (`src/utils/classifier.ts`)
+   Industry and business model are picked by counting keyword matches. Words in the title, description, and main headings count 3×, and CTA buttons like "Get a Quote" or "Add to Cart" count extra for business model. The confidence % shows how clearly the winner beat the other options.
+
+4. **Assemble** (`src/utils/parser.ts`)
+   Combines everything into one `Knowledge` object (`src/types/knowledge.ts`) and records where each value came from.
+
+### Where each value came from
+
+Every field is tagged so you know what to trust:
+
+| Tag | Meaning | Example |
+|---|---|---|
+| *(none)* | Read directly from the website | Address, phone, founding year |
+| **Derived** | Calculated by a rule from what was found | Industry, channels, writing style |
+| **Mock AI** | Placeholder for an LLM step (no AI is called) | Customer needs, ideal persona |
+| **Edited** | Changed by a person | Anything you edit |
+
+The assignment allows mock AI output if it's clearly labeled. Each Mock AI field maps to a real prompt in [`prompts/EXAMPLE_PROMPTS.md`](prompts/EXAMPLE_PROMPTS.md).
+
+---
+
+## Knowledge base structure
+
+All the categories from the assignment, plus extras that help content generation:
+
+- **Company foundation**: overview, industry, business model, role, founded, legal entity, employees, address, service areas, other names
+- **Positioning**: pitch, founding story
+- **Market & customers**: target buyers, customer needs, ideal persona, industry groupings, channels, funnels, CTAs, partners
+- **Branding & style**: writing style, art style, fonts, colors, logos
+- **Online presence**: social links, phone, email
+- **Key people**: name, title, role, background
+- **Offerings**: name, category, description, features, pricing
+- **Beyond the baseline**: content themes, key headlines, unique selling points, trust signals, testimonials, rating, FAQs, mission/values, media mentions
+- **Metadata**: which pages were read, completeness score, where each value came from
+
+Real output from the scraper (not hand-edited): [`examples/beecavedrilling.json`](examples/beecavedrilling.json), [`examples/account-it.json`](examples/account-it.json), [`examples/vistabrewing.json`](examples/vistabrewing.json).
+`examples/handwritten-target-account-it.json` is a hand-written example of what a fully AI-enriched record could look like. It is **not** scraper output.
+
+---
+
+## AI prompts
+
+[`prompts/EXAMPLE_PROMPTS.md`](prompts/EXAMPLE_PROMPTS.md) has 6 prompts. The most important is **Prompt 0**, which fills fields the rules couldn't. Its key rules:
+- Use only the website text, never outside knowledge.
+- Return `null` instead of guessing.
+- Include a quote from the page as evidence for every value.
+- Don't overwrite values the scraper already verified.
+
+---
+
+## Handling missing data
+
+- **Show it as missing, don't invent it.** Empty fields display "Not found on the site" or "Unknown".
+- **Try more than one source.** For example, address comes from structured data, then the Contact page, then any text that looks like a US address.
+- **Skip boilerplate.** Menus, footers, cookie banners, and terms-of-service popups are removed before reading text, so a website vendor's address or email isn't mistaken for the company's.
+- **Completeness score.** The % on each card is the share of baseline fields that were filled.
+- **People fix the rest.** Every field is editable, and edits are tagged.
+
+## Ideas for enrichment beyond the website
+
+- Google Business Profile for hours, reviews, photos, and categories.
+- Review sites (Yelp, BBB, Facebook) for real customer language.
+- The company's social accounts, for tone and what gets engagement.
+- Competitor websites in the same area, to find what makes this company different.
+- State business registries for legal name, entity type, and founding date.
+- A short onboarding questionnaire for things websites rarely say (ideal customer, seasonal busy times).
+
+---
+
+## Database design
+
+See [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md) for the Supabase design. In short:
+- **Organizations** (MoFlo accounts) own **companies**.
+- Each save creates a new, unchangeable **knowledge base version**, so there's full history and easy rollback.
+- **Scrape runs** keep the raw pages, so extraction can be improved and re-run.
+- **Row Level Security** means users only see their own organization's data.
+
+---
+
+## Project structure
+
+```
+src/
+  app/
+    knowledge/page.tsx            Build page (scrape, review, edit, save)
+    knowledge/view/page.tsx       Knowledge bases list
+    knowledge/view/[id]/page.tsx  Single company profile
+    api/scrape/route.ts           Server-side page fetcher
+  components/                     UI (form, batch scraper, display, editor, list)
+  context/KnowledgeContext.tsx    Shared state + saving to localStorage
+  types/knowledge.ts              The knowledge base schema
+  utils/
+    scraper.ts                    Fetch homepage + key subpages
+    parser.ts                     Runs all extractors, builds the knowledge base
+    extract/                      One file per kind of data
+    classifier.ts                 Industry, business model, themes
+    derive.ts                     Rule-based fields (channels, funnels, role)
+    mockAi.ts                     Labeled placeholders for AI-generated fields
+    storage.ts                    JSON/CSV export and import
+```
+
+---
+
+## Assumptions and limitations
+
+- **Built on Next.js 16** (the assignment says 15). The App Router features used are the same.
+- **Reads HTML only.** Sites that build their content with JavaScript after loading show less.
+- **Rule-based extraction is best-effort.** It works well on typical small-business sites (WordPress, Squarespace, Wix), less well on unusual layouts. That's why everything is editable and labeled.
+- **Address detection is tuned for US formats**, and text analysis for English.
+- **Storage is per browser** (`localStorage`). The database design above is the production plan.
+- **The scrape route blocks internal addresses** (localhost, private networks). Production would also limit request rates.
+
+## Other documents
+
+- [`QUESTIONS.md`](QUESTIONS.md): answers to the five required questions
+- [`prompts/EXAMPLE_PROMPTS.md`](prompts/EXAMPLE_PROMPTS.md): AI enrichment prompts
+- [`docs/DATABASE_SCHEMA.md`](docs/DATABASE_SCHEMA.md): Supabase schema, versioning, and security

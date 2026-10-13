@@ -13,18 +13,18 @@ import { Knowledge } from "@/types/knowledge";
 type ScrapeMode = "single" | "batch";
 
 const modes: { value: ScrapeMode; label: string; hint: string }[] = [
-  { value: "single", label: "Single website", hint: "Scrape one homepage and review the results before saving." },
+  { value: "single", label: "Single website", hint: "Scrape one site (homepage plus key pages) and review the results before saving." },
   { value: "batch", label: "Batch scrape", hint: "Paste a list of sites. Each successful scrape is saved automatically." },
 ];
 
 const steps = [
   {
     title: "Fetch",
-    body: "Your URL is sent to the app's /api/scrape route, which downloads the page server-side to avoid browser CORS limits, with a 15-second timeout.",
+    body: "The app's /api/scrape route downloads the homepage server-side (no browser CORS limits), then up to five key pages: about, services, contact, team, FAQ, and reviews.",
   },
   {
     title: "Extract",
-    body: "The HTML is parsed for metadata, social links, logos, brand colors, fonts, headlines, and selling points.",
+    body: "Each page is parsed for structured data, contact details, people, offerings, FAQs, reviews, brand colors, logos, fonts, and messaging.",
   },
   {
     title: "Classify",
@@ -32,7 +32,7 @@ const steps = [
   },
   {
     title: "Review & save",
-    body: "Fix anything that's off, then save. Knowledge bases are stored in your browser and export as JSON or CSV.",
+    body: "Fields are labeled Derived or Mock AI when they weren't read directly from the site. Fix anything that's off, then save and export as JSON or CSV.",
   },
 ];
 

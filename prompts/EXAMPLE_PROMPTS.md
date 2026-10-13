@@ -2,6 +2,99 @@
 
 These example prompts demonstrate how MoKnowledge data would be fed to Claude (or another LLM) to generate enriched content and refined knowledge base fields.
 
+## How these map to the app
+
+MoKnowledge does not call an LLM. Fields that genuinely need one are filled by template placeholders in `src/utils/mockAi.ts`, recorded as `"mock-ai"` in the knowledge base's `provenance` map, and shown with a **Mock AI** badge in the UI. In production each placeholder is replaced by the prompt below:
+
+| Field | Placeholder today | Production prompt |
+|---|---|---|
+| Any baseline field the HTML rules missed | — (left empty) | Prompt 0 |
+| `positioning.pitch` (only when the site has no meta description) | `mockPitch()` | Prompt 1 |
+| `marketAndCustomers.customerNeeds`, `idealPersona` | `mockCustomerNeeds()`, `mockIdealPersona()` | Prompt 3 |
+
+Example outputs below are illustrative, written to show the target shape and tone — they are not real model output.
+
+---
+
+## Prompt 0: Fill Knowledge Base Fields from Raw Page Text
+
+**Purpose:** The rule-based scraper handles what HTML structure exposes reliably (JSON-LD, links, contact details, headings). This prompt fills the fields rules can't — target buyers, customer needs, founding story, offering descriptions — **without inventing facts**. It runs on the cleaned text of the pages already crawled, and only for fields that are still empty.
+
+**Input Data from MoKnowledge:**
+- `pagesScraped` and each page's visible text (nav/footer/cookie banners removed, truncated to ~6,000 tokens total, about/services pages first)
+- The current knowledge base JSON, so the model only fills gaps
+- The list of empty field paths
+
+**Prompt:**
+
+```
+You are filling gaps in a company knowledge base that other AI tools will use to
+write social posts, emails, and blog articles for this business. Accuracy matters
+more than completeness: a wrong fact here gets repeated in every piece of content.
+
+<company>{companyName} — {foundation.website}</company>
+
+<existing_knowledge_base>
+{JSON.stringify(knowledge)}
+</existing_knowledge_base>
+
+<fields_to_fill>
+{emptyFieldPaths.join("\n")}
+</fields_to_fill>
+
+<website_pages>
+{pages.map(p => `<page url="${p.url}">\n${p.text}\n</page>`).join("\n")}
+</website_pages>
+
+Rules:
+1. Use only information stated in <website_pages>. Do not use outside knowledge
+   about this company, even if you recognize it.
+2. If the pages don't support a value, return null for that field. Never guess
+   founding years, employee counts, prices, names, or locations.
+3. For every value you return, include a short verbatim quote from the pages as
+   evidence and the URL it came from.
+4. Inferences are allowed only for targetBuyers, customerNeeds, and idealPersona.
+   Mark them "inferred": true and base them on specific wording in the pages.
+5. Do not change fields that already have values.
+6. Do not infer gender from names.
+
+Return JSON only, in this shape:
+{
+  "fields": {
+    "<field path>": {
+      "value": <string | string[] | number | null>,
+      "evidence": "<verbatim quote, max 200 chars>",
+      "sourceUrl": "<page url>",
+      "inferred": <boolean>,
+      "confidence": <0-1>
+    }
+  }
+}
+```
+
+**Why it's built this way:**
+- **Gaps only, existing values passed in:** the deterministic scraper stays the source of truth for what it can read; the LLM can't overwrite verified data.
+- **Evidence + source URL per field:** every LLM value can be checked by a human in the editor. In production these would be stored with a new provenance value `"ai"` (replacing today's `"mock-ai"`) plus the evidence quote.
+- **Explicit null policy:** small-business sites are often thin; a confident hallucinated "Founded in 2005" is worse than an empty field.
+- **Separating stated facts from inferences:** downstream apps can treat inferred personas as suggestions and stated facts as claims they can repeat.
+- **XML-tagged sections:** keeps long scraped text clearly separated from instructions, so page content can't be mistaken for directions.
+
+**Example Output (Bee Cave Drilling, illustrative):**
+```json
+{
+  "fields": {
+    "foundation.legalEntityType": { "value": null, "evidence": "", "sourceUrl": "", "inferred": false, "confidence": 0 },
+    "marketAndCustomers.targetBuyers": {
+      "value": ["Homeowners and property owners on well water", "Builders and contractors"],
+      "evidence": "Service Austin & The Texas Hill Country in water well installation, inspection, & maintenance.",
+      "sourceUrl": "https://www.beecavedrilling.com/",
+      "inferred": true,
+      "confidence": 0.7
+    }
+  }
+}
+```
+
 ---
 
 ## Prompt 1: Generate Compelling Company Pitch

@@ -57,7 +57,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 const KnowledgeContext = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["createContext"])(undefined);
 function KnowledgeProvider({ children }) {
-    const [currentKnowledge, setCurrentKnowledge] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [knowledgeList, setKnowledgeList] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
@@ -91,7 +90,6 @@ function KnowledgeProvider({ children }) {
             console.log("Knowledge list after add:", updated);
             return updated;
         });
-        setCurrentKnowledge(null);
     };
     const updateKnowledge = (knowledge)=>{
         console.log("Updating knowledge:", knowledge);
@@ -100,17 +98,13 @@ function KnowledgeProvider({ children }) {
             console.log("Knowledge list after update:", updated);
             return updated;
         });
-        setCurrentKnowledge(null);
     };
     const deleteKnowledge = (id)=>{
         setKnowledgeList((prev)=>prev.filter((k)=>k.id !== id));
-        if (currentKnowledge?.id === id) {
-            setCurrentKnowledge(null);
-        }
     };
     const duplicateKnowledge = (id)=>{
         const existing = knowledgeList.find((k)=>k.id === id);
-        if (!existing) return;
+        if (!existing) return null;
         const now = new Date().toISOString();
         const newId = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const duplicate = {
@@ -121,15 +115,14 @@ function KnowledgeProvider({ children }) {
             updatedAt: now
         };
         addKnowledge(duplicate);
-        setCurrentKnowledge(duplicate);
+        return duplicate;
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(KnowledgeContext.Provider, {
         value: {
-            currentKnowledge,
             knowledgeList,
+            isHydrated,
             isLoading,
             error,
-            setCurrentKnowledge,
             addKnowledge,
             updateKnowledge,
             deleteKnowledge,
@@ -140,7 +133,7 @@ function KnowledgeProvider({ children }) {
         children: children
     }, void 0, false, {
         fileName: "[project]/src/context/KnowledgeContext.tsx",
-        lineNumber: 121,
+        lineNumber: 112,
         columnNumber: 5
     }, this);
 }
