@@ -66,11 +66,12 @@ export default function KnowledgeForm({
 
   return (
     <form onSubmit={handleSubmit} className="card">
-      <h3 className="subsection-title">Enter Website URL</h3>
+      <h3 className="subsection-title">Company Website URL</h3>
+      <p className="text-slate-600 text-sm mb-6">Enter any company website and we'll automatically extract key business data</p>
 
       <div className="mb-6">
         <label htmlFor="url" className="block text-sm font-semibold text-slate-900 mb-3">
-          Company Website URL
+          Website URL
         </label>
         <div className="flex gap-3">
           <input
@@ -109,14 +110,14 @@ export default function KnowledgeForm({
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 animate-fade-in">
-          <p className="font-semibold text-red-900 text-sm mb-1">Error</p>
+          <p className="font-semibold text-red-900 text-sm mb-1">⚠️ Error</p>
           <p className="text-red-700 text-sm">{error}</p>
         </div>
       )}
 
       {isLoading && (
-        <div className="flex items-center gap-3 text-blue-600 text-sm animate-fade-in">
-          <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+        <div className="flex items-center gap-3 text-blue-600 text-sm animate-fade-in bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+          <svg className="animate-spin h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
           </svg>
@@ -124,9 +125,14 @@ export default function KnowledgeForm({
         </div>
       )}
 
-      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="font-semibold text-blue-900 text-sm mb-2">💡 Tip</h4>
-        <p className="text-blue-800 text-sm">Enter a company website URL and we'll extract industry, business model, positioning, and more using intelligent scraping.</p>
+      <div className="mt-6 p-5 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg">
+        <div className="flex gap-3">
+          <span className="text-2xl">🚀</span>
+          <div>
+            <h4 className="font-semibold text-blue-900 text-sm mb-2">What we extract</h4>
+            <p className="text-blue-800 text-sm leading-relaxed">Industry, business model, company positioning, branding, social links, key people, offerings, content themes, and more using intelligent HTML analysis.</p>
+          </div>
+        </div>
       </div>
     </form>
   );

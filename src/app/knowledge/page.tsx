@@ -62,33 +62,35 @@ export default function KnowledgePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Build Knowledge Base</h1>
-        <p className="text-gray-600">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl p-8 shadow-lg">
+        <h1 className="text-5xl font-bold mb-3">Build Knowledge Base</h1>
+        <p className="text-xl text-blue-100">
           Enter a company website URL to extract and organize their business information
         </p>
       </div>
 
       {step === "form" && (
         <>
-          <div className="flex gap-2 mb-4">
+          {/* Mode Toggle */}
+          <div className="flex gap-3 bg-white rounded-lg p-2 border border-slate-200 w-fit shadow-sm">
             <button
               onClick={() => setScrapeMode("single")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
                 scrapeMode === "single"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-slate-700 hover:bg-slate-100"
               }`}
             >
               Single Scrape
             </button>
             <button
               onClick={() => setScrapeMode("batch")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
+              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
                 scrapeMode === "batch"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-slate-700 hover:bg-slate-100"
               }`}
             >
               Batch Scrape
@@ -104,14 +106,19 @@ export default function KnowledgePage() {
                 setError={setError}
                 setIsLoading={setIsLoading}
               />
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-900 mb-2">How it works:</h3>
-                <ol className="text-sm text-blue-900 space-y-1 list-decimal list-inside">
-                  <li>Enter a company website URL</li>
-                  <li>The scraper will extract key information</li>
-                  <li>Review and edit the extracted data</li>
-                  <li>Save to your knowledge base</li>
-                </ol>
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6 shadow-sm">
+                <div className="flex items-start gap-3 mb-4">
+                  <span className="text-2xl">📋</span>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-lg mb-3">How it works:</h3>
+                    <ol className="text-sm text-slate-700 space-y-2 list-decimal list-inside">
+                      <li>Enter a company website URL</li>
+                      <li>The scraper will extract key information (industry, business model, positioning, etc.)</li>
+                      <li>Review and edit the extracted data</li>
+                      <li>Save to your knowledge base</li>
+                    </ol>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
@@ -125,15 +132,19 @@ export default function KnowledgePage() {
       )}
 
       {step === "display" && currentKnowledge && (
-        <KnowledgeDisplay knowledge={currentKnowledge} onEdit={handleEdit} />
+        <div className="space-y-4">
+          <KnowledgeDisplay knowledge={currentKnowledge} onEdit={handleEdit} />
+        </div>
       )}
 
       {step === "edit" && currentKnowledge && (
-        <KnowledgeEditor
-          knowledge={currentKnowledge}
-          onSave={handleSave}
-          onCancel={handleCancel}
-        />
+        <div className="space-y-4">
+          <KnowledgeEditor
+            knowledge={currentKnowledge}
+            onSave={handleSave}
+            onCancel={handleCancel}
+          />
+        </div>
       )}
     </div>
   );

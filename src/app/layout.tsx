@@ -71,8 +71,8 @@ export default function RootLayout({
           </header>
 
           {/* Main content */}
-          <main className="min-h-screen">
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+          <main className="flex-1 bg-slate-50">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-12">
               {children}
             </div>
           </main>
