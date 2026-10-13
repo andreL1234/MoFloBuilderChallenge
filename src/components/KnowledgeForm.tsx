@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { fetchUrl } from "@/utils/scraper";
+import { scrapeSite } from "@/utils/scraper";
 import { parseWebsite } from "@/utils/parser";
 import { hostnameOf } from "@/utils/url";
 import { Knowledge } from "@/types/knowledge";
@@ -23,6 +23,7 @@ export default function KnowledgeForm({
   setIsLoading,
 }: KnowledgeFormProps) {
   const [url, setUrl] = useState("");
+  const [progress, setProgress] = useState("");
 
   const validateUrl = (urlString: string): boolean => {
     try {
@@ -53,8 +54,8 @@ export default function KnowledgeForm({
 
     setIsLoading(true);
     try {
-      const html = await fetchUrl(url);
-      const knowledge = parseWebsite(html, url);
+      const site = await scrapeSite(url, setProgress);
+      const knowledge = parseWebsite(site, url);
       onScraped(knowledge);
       setUrl("");
     } catch (err) {
@@ -100,7 +101,7 @@ export default function KnowledgeForm({
       <div className="mt-4 min-h-6 text-sm" aria-live="polite">
         {isLoading && (
           <p className="text-white/85">
-            Fetching <span className="font-medium text-white">{hostnameOf(url) || "website"}</span> and extracting its data. This usually takes a few seconds.
+            <span className="font-medium text-white">{hostnameOf(url) || "Website"}</span>: {progress || "Starting"}…
           </p>
         )}
         {error && !isLoading && (

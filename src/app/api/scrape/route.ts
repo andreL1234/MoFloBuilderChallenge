@@ -1,10 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// This route fetches whatever URL it's given, so refuse obvious internal targets
+// (localhost, private networks, cloud metadata) to avoid being used as a proxy into them.
+function isPrivateHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  return (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".internal") ||
+    host === "::1" ||
+    host === "0.0.0.0" ||
+    /^127\./.test(host) ||
+    /^10\./.test(host) ||
+    /^192\.168\./.test(host) ||
+    /^169\.254\./.test(host) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    /^f[cd][0-9a-f]{2}:/.test(host)
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { url } = await request.json();
 
-    if (!url) {
+    if (!url || typeof url !== "string") {
       return NextResponse.json(
         { error: "URL is required" },
         { status: 400 }
@@ -12,9 +31,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Ensure proper URL format
-    let finalUrl = url;
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-      finalUrl = "https://" + url;
+    let finalUrl = url.trim();
+    if (!finalUrl.startsWith("http://") && !finalUrl.startsWith("https://")) {
+      finalUrl = "https://" + finalUrl;
+    }
+
+    let parsed: URL;
+    try {
+      parsed = new URL(finalUrl);
+    } catch {
+      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+    }
+    if (isPrivateHost(parsed.hostname)) {
+      return NextResponse.json({ error: "That address can't be scraped" }, { status: 400 });
     }
 
     // Fetch from server-side (no CORS restrictions)
@@ -41,7 +70,8 @@ export async function POST(request: NextRequest) {
     }
 
     const html = await response.text();
-    return NextResponse.json({ html });
+    // finalUrl is where redirects ended up; relative links on the page resolve against it
+    return NextResponse.json({ html, finalUrl: response.url || finalUrl });
   } catch (error) {
     console.error("API scrape error:", error);
     if (error instanceof Error) {

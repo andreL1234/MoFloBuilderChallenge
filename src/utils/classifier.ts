@@ -101,6 +101,16 @@ export function detectIndustry(content: PageContent): Classification {
   return toClassification(scoreCategories(INDUSTRIES, content, false), "General Business", 4);
 }
 
+// Every industry with meaningful evidence (at least 30% of the winner's score), best first
+export function industryGroupings(content: PageContent): string[] {
+  const ranked = scoreCategories(INDUSTRIES, content, false);
+  const best = ranked[0]?.score ?? 0;
+  return ranked
+    .filter((r) => r.score >= Math.max(4, best * 0.3))
+    .slice(0, 3)
+    .map((r) => r.label);
+}
+
 export function detectBusinessModel(content: PageContent): Classification {
   return toClassification(scoreCategories(BUSINESS_MODELS, content, true), "Service Provider", 3);
 }

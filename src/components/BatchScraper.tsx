@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { parseWebsite } from "@/utils/parser";
-import { fetchUrl } from "@/utils/scraper";
+import { scrapeSite } from "@/utils/scraper";
 import { hostnameOf } from "@/utils/url";
 import { Knowledge } from "@/types/knowledge";
 import { button, Spinner } from "@/components/ui";
@@ -48,8 +48,8 @@ export default function BatchScraper({ onScraped, setIsLoading }: BatchScraperPr
       setProgress({ current: i + 1, total: urls.length, url });
 
       try {
-        const html = await fetchUrl(url);
-        const knowledge = parseWebsite(html, url);
+        const site = await scrapeSite(url);
+        const knowledge = parseWebsite(site, url);
         scraped.push(knowledge);
         scrapeResults.push({ url, knowledgeId: knowledge.id });
       } catch (error) {

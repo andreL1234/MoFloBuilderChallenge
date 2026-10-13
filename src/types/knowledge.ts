@@ -76,7 +76,14 @@ export interface ThinkBiggerExtensions {
   competitorInfo?: string;
   mediaCovers?: string[];
   communityValues?: string;
+  messagingHeadlines?: string[];
+  reviewRating?: string;
 }
+
+// Where a field's value came from, so reviewers know what to trust:
+// extracted = read directly from the site, derived = computed from extracted data by a rule,
+// mock-ai = placeholder standing in for an LLM call (see /prompts), user = edited by a person.
+export type FieldSource = "extracted" | "derived" | "mock-ai" | "user";
 
 export interface Knowledge {
   id: string;
@@ -93,4 +100,7 @@ export interface Knowledge {
   scrapedAt: string;
   updatedAt: string;
   confidenceScore?: number;
+  // Keyed by field path, e.g. "marketAndCustomers.idealPersona"; fields not listed are "extracted"
+  provenance?: Record<string, FieldSource>;
+  pagesScraped?: string[];
 }
