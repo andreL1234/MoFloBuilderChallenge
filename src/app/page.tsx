@@ -1,32 +1,38 @@
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-600 via-blue-500 to-blue-700">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 text-white">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
+      </div>
+
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center px-6 py-20 text-white">
-        <div className="text-center max-w-4xl mx-auto">
+      <section className="flex-1 flex flex-col items-center justify-center px-6 py-24 relative z-10">
+        <div className="text-center max-w-5xl mx-auto">
           {/* Badge */}
           <div className="inline-block mb-8">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-white text-sm font-semibold border border-white/30">
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-              Powered by MoFlo Cloud
+            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/15 backdrop-blur-lg text-white text-sm font-bold border border-white/20 hover:bg-white/25 transition-all">
+              <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+              AI-Powered Knowledge Builder
             </span>
           </div>
 
-          {/* Main heading */}
-          <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight text-white drop-shadow-lg">
-            Build Knowledge Bases in Minutes
+          {/* Main heading - Large and Bold */}
+          <h1 className="text-7xl md:text-8xl font-black mb-6 leading-tight text-white drop-shadow-2xl">
+            Build <span className="bg-gradient-to-r from-cyan-300 to-blue-200 bg-clip-text text-transparent">Knowledge Bases</span> in Minutes
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-blue-50 mb-12 leading-relaxed max-w-3xl mx-auto">
-            Scrape company websites, extract structured data, and build comprehensive knowledge bases for your entire business. Powered by intelligent extraction and AI enrichment.
+          <p className="text-xl md:text-2xl text-blue-100 mb-12 leading-relaxed max-w-3xl mx-auto font-light">
+            Scrape company websites, extract structured data, and build comprehensive knowledge bases for your entire business
           </p>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+          {/* CTA Buttons - Matching MoFlo Style */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-2">
             <a
               href="/knowledge"
-              className="inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 font-bold rounded-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 shadow-xl hover:bg-blue-50"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-900 font-bold rounded-full hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-xl text-lg"
             >
               Start Building
               <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,77 +41,62 @@ export default function Home() {
             </a>
             <a
               href="/knowledge/view"
-              className="inline-flex items-center justify-center px-10 py-4 bg-white/20 backdrop-blur-md text-white font-bold rounded-lg border-2 border-white/40 hover:bg-white/30 hover:border-white transition-all duration-300 shadow-lg"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/20 backdrop-blur-lg text-white font-bold rounded-full border-2 border-white/40 hover:bg-white/30 hover:border-white transition-all duration-300 text-lg"
             >
-              View Knowledge Bases
+              View My Bases
             </a>
           </div>
+
+          {/* Trust message */}
+          <p className="text-sm text-blue-200 mt-8">✓ No credit card required • ✓ Built by MoFlo Cloud</p>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="bg-white px-6 py-20">
+      {/* Features Grid - Blue background maintained */}
+      <section className="relative z-10 px-6 py-20 bg-gradient-to-b from-transparent to-blue-900/50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              Powerful Features Built for Growth
-            </h2>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Everything you need to extract, organize, and manage company intelligence
-            </p>
-          </div>
+          <h2 className="text-5xl font-black text-center mb-16 text-white">Powerful Features</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
                 title: "Smart Scraping",
-                description: "Automatically extract company data from websites with AI-powered intelligence and confidence scoring",
+                description: "Automatically extract industry, business model, positioning, and company data",
                 icon: "🔍",
-                color: "from-blue-500 to-blue-600",
               },
               {
                 title: "Rich Data Extraction",
-                description: "Industry detection, business models, positioning, branding, social presence, and more",
+                description: "Industry detection, branding, social presence, key people, and more",
                 icon: "📊",
-                color: "from-cyan-500 to-blue-500",
               },
               {
                 title: "Easy Management",
-                description: "Organize, search, filter, duplicate, edit, and export all your knowledge bases",
+                description: "Organize, search, filter, edit, and export all your knowledge bases",
                 icon: "✨",
-                color: "from-blue-600 to-slate-700",
               },
             ].map((feature, i) => (
               <div
                 key={i}
-                className="p-8 rounded-xl bg-white border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 hover:border-blue-300"
+                className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-300"
               >
-                <div className={`inline-block p-4 rounded-lg bg-gradient-to-br ${feature.color} mb-6`}>
-                  <span className="text-3xl">{feature.icon}</span>
-                </div>
-                <h3 className="font-bold text-slate-900 mb-3 text-xl">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+                <div className="text-5xl mb-4">{feature.icon}</div>
+                <h3 className="font-bold text-white mb-3 text-xl">{feature.title}</h3>
+                <p className="text-blue-100 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-16 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
-          <p className="text-lg text-blue-100 mb-8">
-            Build your first knowledge base in minutes. No credit card required.
-          </p>
+      {/* Bottom CTA */}
+      <section className="relative z-10 px-6 py-16 text-center">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-lg text-blue-200 mb-8">Join companies using MoFlo to scale their business intelligence</p>
           <a
             href="/knowledge"
-            className="inline-flex items-center justify-center px-10 py-4 bg-white text-blue-600 font-bold rounded-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 shadow-xl hover:bg-blue-50"
+            className="inline-flex items-center justify-center px-8 py-4 bg-cyan-400 text-blue-900 font-black rounded-full hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-xl text-lg"
           >
-            Launch Knowledge Builder
-            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+            Get Started Free
           </a>
         </div>
       </section>

@@ -78,93 +78,17 @@ export default function RootLayout({
           </main>
 
           {/* Footer */}
-          <footer className="bg-gradient-to-r from-slate-900 to-slate-800 text-white mt-16 border-t border-blue-900/30">
-            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-16">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-                <div>
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-base">M</span>
-                    </div>
-                    <div>
-                      <p className="font-bold text-white text-sm">MoKnowledge</p>
-                      <p className="text-xs text-cyan-400">by MoFlo</p>
-                    </div>
+          <footer className="bg-gradient-to-b from-blue-900 to-blue-950 text-blue-200 border-t border-blue-800/50">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+              <div className="flex flex-col sm:flex-row justify-between items-center text-sm">
+                <div className="flex items-center gap-2 mb-4 sm:mb-0">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center">
+                    <span className="text-blue-900 font-bold text-xs">M</span>
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed">
-                    AI-powered knowledge base builder for modern companies. Extract and organize business intelligence in minutes.
-                  </p>
+                  <span className="font-semibold text-white">MoKnowledge</span>
+                  <span className="text-blue-400">by MoFlo</span>
                 </div>
-                <div>
-                  <h4 className="font-bold mb-4 text-sm text-white">Product</h4>
-                  <ul className="space-y-2 text-slate-300 text-sm">
-                    <li>
-                      <a href="/knowledge" className="hover:text-cyan-400 transition-colors">
-                        Build Knowledge Base
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/knowledge/view" className="hover:text-cyan-400 transition-colors">
-                        View & Manage
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        Export Data
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-bold mb-4 text-sm text-white">Resources</h4>
-                  <ul className="space-y-2 text-slate-300 text-sm">
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        Documentation
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        API Reference
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        Schema Guide
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-bold mb-4 text-sm text-white">Company</h4>
-                  <ul className="space-y-2 text-slate-300 text-sm">
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        About MoFlo
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        Contact
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#" className="hover:text-cyan-400 transition-colors">
-                        Privacy Policy
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <div className="border-t border-slate-700 pt-8">
-                <div className="flex flex-col sm:flex-row justify-between items-center text-slate-400 text-sm">
-                  <p>&copy; 2026 MoFlo Cloud. All rights reserved.</p>
-                  <div className="flex gap-4 mt-4 sm:mt-0">
-                    <a href="#" className="hover:text-cyan-400 transition-colors">Twitter</a>
-                    <a href="#" className="hover:text-cyan-400 transition-colors">LinkedIn</a>
-                    <a href="#" className="hover:text-cyan-400 transition-colors">GitHub</a>
-                  </div>
-                </div>
+                <p>&copy; 2026 MoFlo Cloud</p>
               </div>
             </div>
           </footer>
