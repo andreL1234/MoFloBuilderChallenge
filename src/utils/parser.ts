@@ -1,5 +1,6 @@
 import { Knowledge, CompanyFoundation, Positioning, MarketAndCustomers, BrandingAndStyle, OnlinePresence } from "@/types/knowledge";
 import { hostnameOf, resolveAssetUrl } from "@/utils/url";
+import { detectBusinessModel, detectIndustry, extractThemes, PageContent } from "@/utils/classifier";
 
 // Simple HTML text extraction - removes script and style tags
 function extractText(html: string): string {
@@ -62,25 +63,77 @@ function extractUrls(html: string) {
   };
 }
 
-// Extract social media links
+const SOCIAL_DOMAINS: [keyof Omit<OnlinePresence, "other">, string[]][] = [
+  ["linkedin", ["linkedin.com"]],
+  ["facebook", ["facebook.com"]],
+  ["twitter", ["twitter.com", "x.com"]],
+  ["instagram", ["instagram.com"]],
+  ["youtube", ["youtube.com"]],
+  ["tiktok", ["tiktok.com"]],
+];
+
+// Share buttons, tweet intents, and single videos aren't the company's profile
+const NON_PROFILE_PATH = /\/(sharer|share|intent|watch|embed)\b/i;
+
+// Extract social media profile links, matching on the link's hostname
+// (a substring check would treat "vistabrewingtx.com" as x.com)
 function extractSocialLinks(html: string): Partial<OnlinePresence> {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const links = Array.from(doc.querySelectorAll("a[href]"));
-
   const social: Partial<OnlinePresence> = {};
 
-  links.forEach((link) => {
-    const href = link.getAttribute("href") || "";
+  doc.querySelectorAll("a[href]").forEach((link) => {
+    let url: URL;
+    try {
+      url = new URL(link.getAttribute("href") || "");
+    } catch {
+      return; // relative links can't be social profiles
+    }
+    if (!["http:", "https:"].includes(url.protocol) || NON_PROFILE_PATH.test(url.pathname)) return;
 
-    if (href.includes("linkedin.com")) social.linkedin = href;
-    if (href.includes("facebook.com")) social.facebook = href;
-    if (href.includes("twitter.com") || href.includes("x.com")) social.twitter = href;
-    if (href.includes("instagram.com")) social.instagram = href;
-    if (href.includes("youtube.com")) social.youtube = href;
-    if (href.includes("tiktok.com")) social.tiktok = href;
+    const host = url.hostname.replace(/^(www|m)\./, "");
+    for (const [platform, domains] of SOCIAL_DOMAINS) {
+      if (!social[platform] && domains.some((d) => host === d || host.endsWith(`.${d}`))) {
+        social[platform] = url.href;
+      }
+    }
   });
 
   return social;
+}
+
+// Collect the page's text once, in the shapes the classifier needs
+function extractPageContent(html: string, metadata: ReturnType<typeof extractMetadata>): PageContent {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  doc.querySelectorAll("script, style, noscript, template, svg, iframe").forEach((el) => el.remove());
+  // textContent glues adjacent tags together ("<span>Be #1</span><span>on</span>" -> "Be #1on")
+  doc.body?.querySelectorAll("*").forEach((el) => el.append(" "));
+
+  const clean = (text: string | null | undefined) => (text || "").replace(/\s+/g, " ").trim();
+  const textsOf = (selector: string) =>
+    Array.from(doc.querySelectorAll(selector)).map((el) => clean(el.textContent)).filter((t) => t.length > 0);
+
+  const mainHeadings = textsOf("h1, h2");
+  const actions = textsOf("a, button").filter((t) => t.length <= 40);
+
+  // Menus, footers, cookie banners, and hidden legal/modal text repeat on every site
+  // and drown out what the business actually does
+  doc
+    .querySelectorAll(
+      "nav, footer, dialog, [aria-hidden='true'], [class*='cookie' i], [id*='cookie' i], [class*='consent' i], " +
+        "[class*='modal' i], [id*='modal' i], [class*='terms' i], [id*='terms' i], [class*='privacy' i], [class*='legal' i]"
+    )
+    .forEach((el) => el.remove());
+
+  const blocks = textsOf("h1, h2, h3, h4, p, li, td, blockquote, figcaption");
+  const body = clean(doc.body?.textContent);
+
+  return {
+    summary: [metadata.title, metadata.description, metadata.keywords, ...mainHeadings].join(" . "),
+    actions: actions.join(" . "),
+    body,
+    // Some sites put text in plain <div>s; fall back to the whole body as one block
+    blocks: blocks.join(" ").length >= 200 ? blocks : [body],
+  };
 }
 
 // Extract logos: <img> tags that mention "logo" (in alt, src, or a wrapping element),
@@ -128,39 +181,12 @@ function extractFonts(html: string): string[] {
   return matches.slice(0, 3);
 }
 
-// Extract content for themes/USPs
-function extractContentThemes(html: string): string[] {
-  const text = extractText(html);
-  const lines = text.split("\n").filter((line) => line.length > 20 && line.length < 200);
-
-  // Simple keyword extraction - look for repeated meaningful phrases
-  const keywords: Record<string, number> = {};
-  const commonWords = ["the", "a", "and", "or", "in", "on", "at", "to", "is", "are", "be", "we", "you", "our", "your"];
-
-  lines.forEach((line) => {
-    const words = line.toLowerCase().split(/\s+/);
-    words.forEach((word) => {
-      const clean = word.replace(/[^a-z0-9]/g, "");
-      if (clean.length > 4 && !commonWords.includes(clean)) {
-        keywords[clean] = (keywords[clean] || 0) + 1;
-      }
-    });
-  });
-
-  return Object.entries(keywords)
-    .filter(([_, count]) => count >= 2)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([word]) => word);
-}
-
 // Identify unique selling propositions from content
 function extractUSPs(html: string): string[] {
-  const doc = new DOMParser().parseFromString(html, "text/html");
   const usps: string[] = [];
 
   // Look for common patterns
-  const text = doc.body.textContent || "";
+  const text = extractText(html);
   const patterns = [
     /(?:why choose us|our advantages|what makes us|unique about us)[:\s]*([^.!?]{10,200})/gi,
     /(?:key benefits|our strengths|core value)[:\s]*([^.!?]{10,200})/gi,
@@ -330,96 +356,6 @@ function extractMissionStatement(html: string): string {
   return "";
 }
 
-// Detect industry from content with confidence score
-function detectIndustry(html: string): { industry: string; confidence: number } {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const text = (doc.body.textContent || "").toLowerCase();
-  const metaTags = doc.querySelectorAll("meta[name='keywords'], meta[name='description'], meta[property*='og:']");
-  let metaText = "";
-  metaTags.forEach(tag => {
-    metaText += (tag.getAttribute("content") || "").toLowerCase();
-  });
-
-  const fullText = text + " " + metaText;
-
-  // Industry patterns with confidence weights
-  const patterns: Array<[RegExp, string, number]> = [
-    [/(?:accounting|tax|bookkeeping|cpa|financial|audit)/gi, "Accounting & Tax Services", 0.85],
-    [/(?:software|saas|app|cloud|developer|programming)/gi, "Software/SaaS", 0.80],
-    [/(?:real estate|realtor|property|mortgage|residential)/gi, "Real Estate", 0.80],
-    [/(?:healthcare|medical|clinic|doctor|hospital|dental)/gi, "Healthcare", 0.85],
-    [/(?:drilling|well|construction|engineering|contractor)/gi, "Construction/Resources", 0.75],
-    [/(?:marketing|advertising|agency|creative|digital)/gi, "Marketing/Advertising", 0.70],
-    [/(?:ecommerce|retail|shop|store|merchandise)/gi, "Retail/E-commerce", 0.75],
-    [/(?:consulting|advisory|strategy|management)/gi, "Consulting", 0.65],
-    [/(?:education|training|course|university|school)/gi, "Education", 0.75],
-    [/(?:hospitality|restaurant|hotel|travel|tourism)/gi, "Hospitality/Travel", 0.70],
-  ];
-
-  let bestMatch = { industry: "Unknown", confidence: 0 };
-
-  for (const [pattern, industry, baseConfidence] of patterns) {
-    const matches = fullText.match(pattern);
-    if (matches) {
-      const confidence = Math.min(baseConfidence + (matches.length * 0.05), 0.95);
-      if (confidence > bestMatch.confidence) {
-        bestMatch = { industry, confidence: Math.round(confidence * 100) / 100 };
-      }
-    }
-  }
-
-  return bestMatch;
-}
-
-// Detect business model from content with confidence score
-function detectBusinessModel(html: string): { model: string; confidence: number } {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const text = (doc.body.textContent || "").toLowerCase();
-
-  let confidence = 0;
-  let model = "Service Provider"; // Safe default
-
-  // Check for pricing signals (B2B SaaS/Subscription)
-  if (text.includes("pricing") || text.includes("subscription") || text.includes("per month")) {
-    confidence = 0.75;
-    model = "B2B SaaS / Subscription";
-  }
-
-  // Check for e-commerce
-  if (text.includes("add to cart") || text.includes("checkout") || text.includes("shop")) {
-    confidence = 0.80;
-    model = "E-commerce";
-  }
-
-  // Check for service business
-  if (text.includes("book appointment") || text.includes("schedule") || text.includes("consultation")) {
-    confidence = Math.max(confidence, 0.70);
-    model = "Service Business";
-  }
-
-  // Check for B2B service provider
-  if (text.includes("contact sales") || text.includes("enterprise") || text.includes("custom solution")) {
-    confidence = Math.max(confidence, 0.65);
-    model = "B2B Service Provider";
-  }
-
-  // Check for freelance/agency
-  if (text.includes("portfolio") || text.includes("case studies") || text.includes("hire us")) {
-    confidence = Math.max(confidence, 0.60);
-    model = "Agency/Freelance";
-  }
-
-  // Low confidence = unsure
-  if (confidence === 0) {
-    confidence = 0.35; // Very low confidence in default
-  }
-
-  return {
-    model,
-    confidence: Math.round(confidence * 100) / 100
-  };
-}
-
 export function parseWebsite(html: string, url: string): Knowledge {
   const metadata = extractMetadata(html);
   const { phones } = extractUrls(html);
@@ -427,12 +363,14 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const logos = extractLogos(html, url);
   const colors = extractColors(html);
   const fonts = extractFonts(html);
-  const themes = extractContentThemes(html);
   const usps = extractUSPs(html);
+  const companyName = metadata.title.split("|")[0].trim() || hostnameOf(url);
 
-  // Auto-detect industry and business model with confidence scores
-  const industryDetection = detectIndustry(html);
-  const businessModelDetection = detectBusinessModel(html);
+  // Auto-detect industry, business model, and themes from the page's visible text
+  const pageContent = extractPageContent(html, metadata);
+  const industryDetection = detectIndustry(pageContent);
+  const businessModelDetection = detectBusinessModel(pageContent);
+  const themes = extractThemes(pageContent, companyName);
 
   // Enhanced extraction (simplified for reliability)
   // Note: Advanced extraction functions exist but are disabled for MVP
@@ -443,13 +381,11 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const testimonials: any[] = [];
   const mission = "";
 
-  const companyName = metadata.title.split("|")[0].trim() || hostnameOf(url);
-
   const foundation: CompanyFoundation = {
     overview: metadata.description || "Company information from website",
     website: url,
-    industry: industryDetection.industry,
-    businessModel: businessModelDetection.model,
+    industry: industryDetection.label,
+    businessModel: businessModelDetection.label,
     companyRole: "Service Provider",
     industryConfidence: industryDetection.confidence,
     businessModelConfidence: businessModelDetection.confidence,
