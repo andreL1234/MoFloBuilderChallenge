@@ -65,12 +65,9 @@ export default function KnowledgeForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card">
-      <h3 className="subsection-title">Company Website URL</h3>
-      <p className="text-slate-600 text-sm mb-6">Enter any company website and we'll automatically extract key business data</p>
-
-      <div className="mb-6">
-        <label htmlFor="url" className="block text-sm font-semibold text-slate-900 mb-3">
+    <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
+      <div className="mb-8">
+        <label htmlFor="url" className="block text-sm font-bold text-white mb-4">
           Website URL
         </label>
         <div className="flex gap-3">
@@ -80,59 +77,36 @@ export default function KnowledgeForm({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="example.com or https://example.com"
-            className="input flex-1"
+            className="flex-1 px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="btn-primary px-8 whitespace-nowrap"
+            className="px-8 py-3 bg-white text-blue-900 font-bold rounded-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 whitespace-nowrap"
           >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Scraping...
-              </>
-            ) : (
-              <>
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Scrape
-              </>
-            )}
+            {isLoading ? "Scraping..." : "Scrape"}
           </button>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 animate-fade-in">
-          <p className="font-semibold text-red-900 text-sm mb-1">⚠️ Error</p>
-          <p className="text-red-700 text-sm">{error}</p>
+        <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-4 mb-6 animate-fade-in backdrop-blur-sm">
+          <p className="font-semibold text-red-100 text-sm mb-1">Error</p>
+          <p className="text-red-200 text-sm">{error}</p>
         </div>
       )}
 
       {isLoading && (
-        <div className="flex items-center gap-3 text-blue-600 text-sm animate-fade-in bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
-          <svg className="animate-spin h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-          </svg>
+        <div className="flex items-center gap-3 text-blue-100 text-sm animate-fade-in bg-white/10 p-4 rounded-lg border border-white/20 mb-6 backdrop-blur-sm">
+          <div className="animate-spin h-5 w-5 flex-shrink-0 border-2 border-blue-100 border-t-white rounded-full" />
           <span>Scraping website... This may take a moment.</span>
         </div>
       )}
 
-      <div className="mt-6 p-5 bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg">
-        <div className="flex gap-3">
-          <span className="text-2xl">🚀</span>
-          <div>
-            <h4 className="font-semibold text-blue-900 text-sm mb-2">What we extract</h4>
-            <p className="text-blue-800 text-sm leading-relaxed">Industry, business model, company positioning, branding, social links, key people, offerings, content themes, and more using intelligent HTML analysis.</p>
-          </div>
-        </div>
+      <div className="p-5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
+        <h4 className="font-bold text-white text-sm mb-2">What we extract</h4>
+        <p className="text-blue-100 text-sm leading-relaxed">Industry, business model, company positioning, branding, social links, key people, offerings, and more using intelligent HTML analysis.</p>
       </div>
     </form>
   );

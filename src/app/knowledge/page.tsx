@@ -62,90 +62,91 @@ export default function KnowledgePage() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl p-8 shadow-lg">
-        <h1 className="text-5xl font-bold mb-3">Build Knowledge Base</h1>
-        <p className="text-xl text-blue-100">
-          Enter a company website URL to extract and organize their business information
-        </p>
+    <div className="min-h-screen flex flex-col text-white">
+      {/* Fixed background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
       </div>
 
-      {step === "form" && (
-        <>
-          {/* Mode Toggle */}
-          <div className="flex gap-3 bg-white rounded-lg p-2 border border-slate-200 w-fit shadow-sm">
-            <button
-              onClick={() => setScrapeMode("single")}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
-                scrapeMode === "single"
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              Single Scrape
-            </button>
-            <button
-              onClick={() => setScrapeMode("batch")}
-              className={`px-6 py-2 rounded-lg font-semibold transition-all duration-300 ${
-                scrapeMode === "batch"
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`}
-            >
-              Batch Scrape
-            </button>
-          </div>
+      {/* Content wrapper */}
+      <div className="relative z-10 flex-1 flex flex-col">
+        {step === "form" && (
+          <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
+            <div className="w-full max-w-2xl">
+              {/* Title */}
+              <h1 className="text-6xl md:text-7xl font-black mb-4 leading-tight text-white drop-shadow-2xl">
+                Build Knowledge Base
+              </h1>
+              <p className="text-xl text-blue-100 mb-12">
+                Enter a company website URL to extract and organize their business information
+              </p>
 
-          {scrapeMode === "single" ? (
-            <>
-              <KnowledgeForm
-                onScraped={handleScraped}
-                isLoading={isLoading}
-                error={error}
-                setError={setError}
-                setIsLoading={setIsLoading}
-              />
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6 shadow-sm">
-                <div className="flex items-start gap-3 mb-4">
-                  <span className="text-2xl">📋</span>
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-lg mb-3">How it works:</h3>
-                    <ol className="text-sm text-slate-700 space-y-2 list-decimal list-inside">
-                      <li>Enter a company website URL</li>
-                      <li>The scraper will extract key information (industry, business model, positioning, etc.)</li>
-                      <li>Review and edit the extracted data</li>
-                      <li>Save to your knowledge base</li>
-                    </ol>
-                  </div>
-                </div>
+              {/* Mode Toggle */}
+              <div className="flex gap-3 bg-white/10 backdrop-blur-md rounded-full p-1 w-fit mb-8 border border-white/20">
+                <button
+                  onClick={() => setScrapeMode("single")}
+                  className={`px-8 py-3 rounded-full font-bold transition-all duration-300 ${
+                    scrapeMode === "single"
+                      ? "bg-white text-blue-900 shadow-lg"
+                      : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Single Scrape
+                </button>
+                <button
+                  onClick={() => setScrapeMode("batch")}
+                  className={`px-8 py-3 rounded-full font-bold transition-all duration-300 ${
+                    scrapeMode === "batch"
+                      ? "bg-white text-blue-900 shadow-lg"
+                      : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Batch Scrape
+                </button>
               </div>
-            </>
-          ) : (
-            <BatchScraper
-              onScraped={handleBatchScraped}
-              onError={setError}
-              setIsLoading={setIsLoading}
-            />
-          )}
-        </>
-      )}
 
-      {step === "display" && currentKnowledge && (
-        <div className="space-y-4">
-          <KnowledgeDisplay knowledge={currentKnowledge} onEdit={handleEdit} />
-        </div>
-      )}
+              {scrapeMode === "single" ? (
+                <>
+                  <KnowledgeForm
+                    onScraped={handleScraped}
+                    isLoading={isLoading}
+                    error={error}
+                    setError={setError}
+                    setIsLoading={setIsLoading}
+                  />
+                </>
+              ) : (
+                <BatchScraper
+                  onScraped={handleBatchScraped}
+                  onError={setError}
+                  setIsLoading={setIsLoading}
+                />
+              )}
+            </div>
+          </div>
+        )}
 
-      {step === "edit" && currentKnowledge && (
-        <div className="space-y-4">
-          <KnowledgeEditor
-            knowledge={currentKnowledge}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        </div>
-      )}
+        {step === "display" && currentKnowledge && (
+          <div className="flex-1 flex items-center justify-center px-6 py-20">
+            <div className="w-full max-w-4xl">
+              <KnowledgeDisplay knowledge={currentKnowledge} onEdit={handleEdit} />
+            </div>
+          </div>
+        )}
+
+        {step === "edit" && currentKnowledge && (
+          <div className="flex-1 flex items-center justify-center px-6 py-20">
+            <div className="w-full max-w-4xl">
+              <KnowledgeEditor
+                knowledge={currentKnowledge}
+                onSave={handleSave}
+                onCancel={handleCancel}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -35,9 +35,6 @@ export default function Home() {
               className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-900 font-bold rounded-full hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-xl text-lg"
             >
               Start Building
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
             </a>
             <a
               href="/knowledge/view"
@@ -48,7 +45,7 @@ export default function Home() {
           </div>
 
           {/* Trust message */}
-          <p className="text-sm text-blue-200 mt-8">✓ No credit card required • ✓ Built by MoFlo Cloud</p>
+          <p className="text-sm text-blue-200 mt-8">No credit card required</p>
         </div>
       </section>
 
@@ -62,24 +59,20 @@ export default function Home() {
               {
                 title: "Smart Scraping",
                 description: "Automatically extract industry, business model, positioning, and company data",
-                icon: "🔍",
               },
               {
                 title: "Rich Data Extraction",
                 description: "Industry detection, branding, social presence, key people, and more",
-                icon: "📊",
               },
               {
                 title: "Easy Management",
                 description: "Organize, search, filter, edit, and export all your knowledge bases",
-                icon: "✨",
               },
             ].map((feature, i) => (
               <div
                 key={i}
                 className="p-8 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 hover:border-white/40 transition-all duration-300"
               >
-                <div className="text-5xl mb-4">{feature.icon}</div>
                 <h3 className="font-bold text-white mb-3 text-xl">{feature.title}</h3>
                 <p className="text-blue-100 leading-relaxed">{feature.description}</p>
               </div>
@@ -91,7 +84,7 @@ export default function Home() {
       {/* Bottom CTA */}
       <section className="relative z-10 px-6 py-16 text-center">
         <div className="max-w-3xl mx-auto">
-          <p className="text-lg text-blue-200 mb-8">Join companies using MoFlo to scale their business intelligence</p>
+          <p className="text-lg text-blue-200 mb-8">Scale your business intelligence with AI-powered knowledge extraction</p>
           <a
             href="/knowledge"
             className="inline-flex items-center justify-center px-8 py-4 bg-cyan-400 text-blue-900 font-black rounded-full hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-xl text-lg"
