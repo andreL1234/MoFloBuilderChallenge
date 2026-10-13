@@ -1,173 +1,183 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useKnowledge } from "@/context/KnowledgeContext";
 import KnowledgeForm from "@/components/KnowledgeForm";
-import KnowledgeDisplay from "@/components/KnowledgeDisplay";
+import KnowledgeDisplay, { KnowledgeHeader } from "@/components/KnowledgeDisplay";
 import KnowledgeEditor from "@/components/KnowledgeEditor";
 import BatchScraper from "@/components/BatchScraper";
+import { button, Card } from "@/components/ui";
 import { Knowledge } from "@/types/knowledge";
 
-type PageStep = "form" | "display" | "edit" | "batch";
 type ScrapeMode = "single" | "batch";
 
-export default function KnowledgePage() {
-  const { setCurrentKnowledge, currentKnowledge, addKnowledge, updateKnowledge, knowledgeList, isLoading, error, setError, setIsLoading } = useKnowledge();
-  const [step, setStep] = useState<PageStep>("form");
-  const [scrapeMode, setScrapeMode] = useState<ScrapeMode>("single");
+const modes: { value: ScrapeMode; label: string; hint: string }[] = [
+  { value: "single", label: "Single website", hint: "Scrape one homepage and review the results before saving." },
+  { value: "batch", label: "Batch scrape", hint: "Paste a list of sites. Each successful scrape is saved automatically." },
+];
 
-  // When currentKnowledge changes and we navigate here (from /view for editing),
-  // start with display step. Otherwise stay in form for new scrapes.
+const steps = [
+  {
+    title: "Fetch",
+    body: "Your URL is sent to the app's /api/scrape route, which downloads the page server-side to avoid browser CORS limits, with a 15-second timeout.",
+  },
+  {
+    title: "Extract",
+    body: "The HTML is parsed for metadata, social links, logos, brand colors, fonts, headlines, and selling points.",
+  },
+  {
+    title: "Classify",
+    body: "Keyword signals score the likely industry and business model. Each guess shows a confidence percentage so you know what to double-check.",
+  },
+  {
+    title: "Review & save",
+    body: "Fix anything that's off, then save. Knowledge bases are stored in your browser and export as JSON or CSV.",
+  },
+];
+
+export default function KnowledgePage() {
+  const router = useRouter();
+  const { addKnowledge, isLoading, error, setError, setIsLoading } = useKnowledge();
+  const [mode, setMode] = useState<ScrapeMode>("single");
+  const [preview, setPreview] = useState<Knowledge | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const previewRef = useRef<HTMLElement>(null);
+
+  // Bring the freshly scraped result into view
   useEffect(() => {
-    if (currentKnowledge && step === "form") {
-      setStep("display");
-    }
-  }, [currentKnowledge]);
+    if (preview) previewRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [preview?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleScraped = (knowledge: Knowledge) => {
-    setCurrentKnowledge(knowledge);
-    setStep("display");
-  };
-
-  const handleEdit = () => {
-    setStep("edit");
+    setPreview(knowledge);
+    setIsEditing(false);
   };
 
   const handleSave = (knowledge: Knowledge) => {
-    // Check if this knowledge base already exists in the list
-    const exists = knowledgeList.some((k) => k.id === knowledge.id);
-
-    if (exists) {
-      // Update existing knowledge base
-      updateKnowledge(knowledge);
-    } else {
-      // Add new knowledge base
-      addKnowledge(knowledge);
-    }
-    setStep("form");
-    alert("Knowledge base saved successfully!");
+    addKnowledge(knowledge);
+    router.push(`/knowledge/view/${knowledge.id}`);
   };
 
-  const handleCancel = () => {
-    setStep("display");
+  const handleBatchScraped = (scraped: Knowledge[]) => {
+    scraped.forEach((kb) => addKnowledge(kb));
   };
 
-  const handleBatchScraped = (knowledgeList: Knowledge[]) => {
-    knowledgeList.forEach((kb) => {
-      addKnowledge(kb);
-    });
-    alert(`Successfully imported ${knowledgeList.length} knowledge base(s)!`);
-    setScrapeMode("single");
-    setStep("form");
+  const switchMode = (next: ScrapeMode) => {
+    setMode(next);
+    setError(null);
   };
+
+  const activeMode = modes.find((m) => m.value === mode)!;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900 text-white">
-      {/* Fixed background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 -left-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl" />
-      </div>
+    <>
+      <section className="hero-bg px-4 pt-36 pb-28 sm:pt-44 sm:pb-36">
+        <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
+          <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm font-medium text-white/90">
+            Knowledge base builder for small businesses
+            <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold text-brand-600">MoFlo</span>
+          </p>
 
-      {/* Top Navigation */}
-      <div className="relative z-10 px-6 py-6 border-b border-white/10">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Build Knowledge Base</h1>
-          <a
-            href="/knowledge/view"
-            className="px-6 py-2 bg-white/20 backdrop-blur-md text-white font-bold rounded-full border border-white/40 hover:bg-white/30 hover:border-white transition-all"
-          >
-            View Knowledge Bases
-          </a>
+          <h1 className="mt-6 text-4xl leading-[1.15] font-semibold tracking-tight text-white sm:text-6xl">
+            Turn any website into a{" "}
+            <span className="mt-2 inline-block -rotate-2 rounded-2xl bg-white px-4 py-1 text-brand-600 shadow-float">
+              knowledge base
+            </span>
+          </h1>
+
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/80 sm:text-lg">
+            Enter a company URL and get its brand, positioning, and online presence as structured data that
+            MoSocial, MoMail, and MoBlogs can write from.
+          </p>
+
+          <div className="mt-10 inline-flex rounded-full bg-white/10 p-1 ring-1 ring-white/20 backdrop-blur-md">
+            {modes.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                onClick={() => switchMode(m.value)}
+                aria-pressed={mode === m.value}
+                disabled={isLoading}
+                className={`rounded-full px-5 py-2 text-sm font-medium transition-all disabled:cursor-not-allowed ${
+                  mode === m.value ? "bg-white text-brand-600 shadow-sm" : "text-white/85 hover:text-white"
+                }`}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 mb-6 text-sm text-white/70">{activeMode.hint}</p>
+
+          {mode === "single" ? (
+            <KnowledgeForm
+              onScraped={handleScraped}
+              isLoading={isLoading}
+              error={error}
+              setError={setError}
+              setIsLoading={setIsLoading}
+            />
+          ) : (
+            <BatchScraper onScraped={handleBatchScraped} setIsLoading={setIsLoading} />
+          )}
         </div>
-      </div>
+      </section>
 
-      {/* Content wrapper */}
-      <div className="relative z-10 flex-1 flex flex-col">
-        {step === "form" && (
-          <>
-            {/* Single Scrape Section */}
-            {scrapeMode === "single" && (
-              <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
-                <div className="w-full max-w-2xl">
-                  <h2 className="text-5xl font-black mb-4 text-white drop-shadow-2xl">
-                    Scrape Single Website
-                  </h2>
-                  <p className="text-lg text-blue-100 mb-12">
-                    Enter a company website URL to extract and organize their business information
-                  </p>
-
-                  <KnowledgeForm
-                    onScraped={handleScraped}
-                    isLoading={isLoading}
-                    error={error}
-                    setError={setError}
-                    setIsLoading={setIsLoading}
-                  />
-
-                  <div className="mt-8 flex justify-center">
-                    <button
-                      onClick={() => setScrapeMode("batch")}
-                      className="px-6 py-3 bg-white/20 backdrop-blur-md text-white font-bold rounded-full border border-white/40 hover:bg-white/30 hover:border-white transition-all"
-                    >
-                      Switch to Batch Scrape
+      {preview && (
+        <section ref={previewRef} className="mx-auto max-w-6xl scroll-mt-6 px-4 pt-6 pb-16">
+          <p className="mb-3 text-xs font-semibold tracking-wide text-brand-600 uppercase">Review extracted data</p>
+          <Card className="mb-6 p-6">
+            <KnowledgeHeader
+              knowledge={preview}
+              actions={
+                !isEditing && (
+                  <>
+                    <button type="button" onClick={() => setPreview(null)} className={button.subtle}>
+                      Discard
                     </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Batch Scrape Section */}
-            {scrapeMode === "batch" && (
-              <div className="flex-1 flex flex-col items-center justify-center px-6 py-20">
-                <div className="w-full max-w-2xl">
-                  <h2 className="text-5xl font-black mb-4 text-white drop-shadow-2xl">
-                    Batch Scrape Websites
-                  </h2>
-                  <p className="text-lg text-blue-100 mb-12">
-                    Enter multiple website URLs to scrape and save multiple knowledge bases at once
-                  </p>
-
-                  <BatchScraper
-                    onScraped={handleBatchScraped}
-                    onError={setError}
-                    setIsLoading={setIsLoading}
-                  />
-
-                  <div className="mt-8 flex justify-center">
-                    <button
-                      onClick={() => setScrapeMode("single")}
-                      className="px-6 py-3 bg-white/20 backdrop-blur-md text-white font-bold rounded-full border border-white/40 hover:bg-white/30 hover:border-white transition-all"
-                    >
-                      Switch to Single Scrape
+                    <button type="button" onClick={() => setIsEditing(true)} className={button.subtle}>
+                      Edit fields
                     </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </>
-        )}
+                    <button type="button" onClick={() => handleSave(preview)} className={button.primary}>
+                      Save knowledge base
+                    </button>
+                  </>
+                )
+              }
+            />
+          </Card>
+          {isEditing ? (
+            <KnowledgeEditor
+              knowledge={preview}
+              saveLabel="Save knowledge base"
+              onSave={handleSave}
+              onCancel={() => setIsEditing(false)}
+            />
+          ) : (
+            <KnowledgeDisplay knowledge={preview} />
+          )}
+        </section>
+      )}
 
-        {step === "display" && currentKnowledge && (
-          <div className="flex-1 flex items-center justify-center px-6 py-20">
-            <div className="w-full max-w-4xl">
-              <KnowledgeDisplay knowledge={currentKnowledge} onEdit={handleEdit} />
-            </div>
-          </div>
-        )}
-
-        {step === "edit" && currentKnowledge && (
-          <div className="flex-1 flex items-center justify-center px-6 py-20">
-            <div className="w-full max-w-4xl">
-              <KnowledgeEditor
-                knowledge={currentKnowledge}
-                onSave={handleSave}
-                onCancel={handleCancel}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+      <section className="mx-auto max-w-6xl px-4 pt-8 pb-24">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <p className="text-xs font-semibold tracking-wide text-brand-600 uppercase">How it works</p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-ink">What happens when you scrape</h2>
+        </div>
+        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map((step, i) => (
+            <li key={step.title}>
+              <Card className="h-full p-6">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 font-display text-sm font-semibold text-brand-600 ring-1 ring-brand-100">
+                  {i + 1}
+                </span>
+                <h3 className="mt-5 font-semibold text-ink">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{step.body}</p>
+              </Card>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </>
   );
 }

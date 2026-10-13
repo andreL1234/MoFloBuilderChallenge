@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { fetchUrl } from "@/utils/scraper";
 import { parseWebsite } from "@/utils/parser";
+import { hostnameOf } from "@/utils/url";
 import { Knowledge } from "@/types/knowledge";
+import { button, Spinner } from "@/components/ui";
 
 interface KnowledgeFormProps {
   onScraped: (knowledge: Knowledge) => void;
@@ -65,48 +67,48 @@ export default function KnowledgeForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8">
-      <div className="mb-8">
-        <label htmlFor="url" className="block text-sm font-bold text-white mb-4">
-          Website URL
-        </label>
-        <div className="flex gap-3">
+    <form onSubmit={handleSubmit} className="w-full">
+      <div className="flex flex-col gap-3 rounded-[28px] border border-white/25 bg-white/10 p-2 backdrop-blur-md sm:flex-row sm:items-center sm:rounded-full">
+        <label htmlFor="url" className="flex flex-1 items-center gap-3 px-4">
+          <svg className="h-5 w-5 shrink-0 text-white/70" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+          </svg>
+          <span className="sr-only">Company website URL</span>
           <input
-            type="text"
             id="url"
+            type="text"
+            inputMode="url"
+            autoComplete="off"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="example.com or https://example.com"
-            className="flex-1 px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:bg-white/30 focus:border-white/60 focus:outline-none transition-all"
+            placeholder="company.com"
             disabled={isLoading}
+            className="w-full bg-transparent py-2.5 text-lg text-white placeholder:text-white/55 focus:outline-none"
           />
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="px-8 py-3 bg-white text-blue-900 font-bold rounded-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 shadow-lg disabled:opacity-50 whitespace-nowrap"
-          >
-            {isLoading ? "Scraping..." : "Scrape"}
-          </button>
-        </div>
+        </label>
+        <button type="submit" disabled={isLoading} className={button.dark}>
+          {isLoading ? (
+            <>
+              <Spinner /> Scraping
+            </>
+          ) : (
+            "Build knowledge base"
+          )}
+        </button>
       </div>
 
-      {error && (
-        <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-4 mb-6 animate-fade-in backdrop-blur-sm">
-          <p className="font-semibold text-red-100 text-sm mb-1">Error</p>
-          <p className="text-red-200 text-sm">{error}</p>
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="flex items-center gap-3 text-blue-100 text-sm animate-fade-in bg-white/10 p-4 rounded-lg border border-white/20 mb-6 backdrop-blur-sm">
-          <div className="animate-spin h-5 w-5 flex-shrink-0 border-2 border-blue-100 border-t-white rounded-full" />
-          <span>Scraping website... This may take a moment.</span>
-        </div>
-      )}
-
-      <div className="p-5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg">
-        <h4 className="font-bold text-white text-sm mb-2">What we extract</h4>
-        <p className="text-blue-100 text-sm leading-relaxed">Industry, business model, company positioning, branding, social links, key people, offerings, and more using intelligent HTML analysis.</p>
+      <div className="mt-4 min-h-6 text-sm" aria-live="polite">
+        {isLoading && (
+          <p className="text-white/85">
+            Fetching <span className="font-medium text-white">{hostnameOf(url) || "website"}</span> and extracting its data. This usually takes a few seconds.
+          </p>
+        )}
+        {error && !isLoading && (
+          <p className="mx-auto inline-flex items-center gap-2 rounded-full bg-red-500/20 px-4 py-1.5 text-red-50 ring-1 ring-red-300/40">
+            <span className="h-1.5 w-1.5 rounded-full bg-red-300" />
+            {error}
+          </p>
+        )}
       </div>
     </form>
   );

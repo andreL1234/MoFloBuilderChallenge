@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
 import { KnowledgeProvider } from "@/context/KnowledgeContext";
+import SiteNav from "@/components/SiteNav";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "MoKnowledge - Company Knowledge Base Builder",
   description:
-    "Web-based tool to scrape company websites and build comprehensive knowledge bases",
+    "Scrape company websites and turn them into structured knowledge bases",
 };
 
 export default function RootLayout({
@@ -14,13 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="bg-gradient-to-br from-blue-900 via-blue-700 to-blue-900" suppressHydrationWarning>
+    // suppressHydrationWarning: browser extensions (e.g. Grammarly) inject attributes into <html>/<body>
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <KnowledgeProvider>
-          {/* Main content - full height with blue background */}
-          <main className="min-h-screen flex flex-col">
-            {children}
-          </main>
+          <SiteNav />
+          <main className="min-h-screen">{children}</main>
         </KnowledgeProvider>
       </body>
     </html>

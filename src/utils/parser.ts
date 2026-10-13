@@ -1,4 +1,5 @@
 import { Knowledge, CompanyFoundation, Positioning, MarketAndCustomers, BrandingAndStyle, OnlinePresence } from "@/types/knowledge";
+import { hostnameOf, resolveAssetUrl } from "@/utils/url";
 
 // Simple HTML text extraction - removes script and style tags
 function extractText(html: string): string {
@@ -82,30 +83,42 @@ function extractSocialLinks(html: string): Partial<OnlinePresence> {
   return social;
 }
 
-// Extract images/logos
-function extractImages(html: string): string[] {
+// Extract logos: <img> tags that mention "logo" (in alt, src, or a wrapping element),
+// falling back to the site's touch icon / favicon. URLs are made absolute so they render in our app.
+function extractLogos(html: string, baseUrl: string): string[] {
   const doc = new DOMParser().parseFromString(html, "text/html");
-  const images = Array.from(doc.querySelectorAll("img"));
-  const logos = images
-    .filter((img) => {
-      const alt = img.getAttribute("alt") || "";
-      const src = img.getAttribute("src") || "";
-      return (
-        alt.toLowerCase().includes("logo") ||
-        src.toLowerCase().includes("logo")
-      );
-    })
-    .map((img) => img.getAttribute("src") || "")
-    .filter((src) => src.length > 0);
 
-  return logos.length > 0 ? logos : images.slice(0, 3).map((img) => img.getAttribute("src") || "");
+  const logoImages = Array.from(doc.querySelectorAll("img"))
+    .filter((img) => {
+      const alt = (img.getAttribute("alt") || "").toLowerCase();
+      const src = (img.getAttribute("src") || "").toLowerCase();
+      const insideLogoElement = img.closest('[class*="logo" i], [id*="logo" i]') !== null;
+      return alt.includes("logo") || src.includes("logo") || insideLogoElement;
+    })
+    // Lazy-loaded images keep the real URL in data-src
+    .map((img) => img.getAttribute("data-src") || img.getAttribute("src"));
+
+  const icons = Array.from(
+    doc.querySelectorAll('link[rel~="apple-touch-icon"], link[rel~="icon"]')
+  ).map((link) => link.getAttribute("href"));
+
+  const resolved = [...logoImages, ...icons]
+    .map((src) => resolveAssetUrl(src, baseUrl))
+    .filter((src): src is string => src !== null);
+
+  return [...new Set(resolved)].slice(0, 6);
 }
 
-// Extract color palette from CSS
+// Extract color palette: the declared theme-color first, then hex values found in inline CSS
 function extractColors(html: string): string[] {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const themeColor = doc.querySelector('meta[name="theme-color"]')?.getAttribute("content") || "";
+
   const colorRegex = /#[0-9A-Fa-f]{6}\b/g;
   const matches = html.match(colorRegex) || [];
-  return [...new Set(matches)].slice(0, 5);
+  const candidates = /^#[0-9A-Fa-f]{6}$/.test(themeColor) ? [themeColor, ...matches] : matches;
+
+  return [...new Set(candidates.map((c) => c.toUpperCase()))].slice(0, 6);
 }
 
 // Extract fonts
@@ -117,7 +130,7 @@ function extractFonts(html: string): string[] {
 
 // Extract content for themes/USPs
 function extractContentThemes(html: string): string[] {
-  const text = new DOMParser().parseFromString(html, "text/html").body.textContent || "";
+  const text = extractText(html);
   const lines = text.split("\n").filter((line) => line.length > 20 && line.length < 200);
 
   // Simple keyword extraction - look for repeated meaningful phrases
@@ -411,7 +424,7 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const metadata = extractMetadata(html);
   const { phones } = extractUrls(html);
   const socialLinks = extractSocialLinks(html);
-  const logos = extractImages(html);
+  const logos = extractLogos(html, url);
   const colors = extractColors(html);
   const fonts = extractFonts(html);
   const themes = extractContentThemes(html);
@@ -430,7 +443,7 @@ export function parseWebsite(html: string, url: string): Knowledge {
   const testimonials: any[] = [];
   const mission = "";
 
-  const companyName = metadata.title.split("|")[0].trim() || new URL(url).hostname;
+  const companyName = metadata.title.split("|")[0].trim() || hostnameOf(url);
 
   const foundation: CompanyFoundation = {
     overview: metadata.description || "Company information from website",
@@ -479,7 +492,7 @@ export function parseWebsite(html: string, url: string): Knowledge {
 
   const brandingAndStyle: BrandingAndStyle = {
     writingStyle: "Professional",
-    colors: colors.length > 0 ? colors : ["#000000"],
+    colors,
     logos: logos,
     fonts: fonts,
   };

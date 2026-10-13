@@ -3,26 +3,36 @@
 import { useState } from "react";
 import { Knowledge } from "@/types/knowledge";
 import { downloadJSON } from "@/utils/storage";
+import { button, Card, ConfidenceBadge, inputClass } from "@/components/ui";
 
 interface KnowledgeEditorProps {
   knowledge: Knowledge;
   onSave: (knowledge: Knowledge) => void;
   onCancel: () => void;
+  saveLabel?: string;
+}
+
+function FieldLabel({ htmlFor, children, badge }: { htmlFor: string; children: React.ReactNode; badge?: React.ReactNode }) {
+  return (
+    <div className="mb-2 flex items-center justify-between">
+      <label htmlFor={htmlFor} className="text-sm font-medium text-ink">
+        {children}
+      </label>
+      {badge}
+    </div>
+  );
 }
 
 export default function KnowledgeEditor({
   knowledge,
   onSave,
   onCancel,
+  saveLabel = "Save changes",
 }: KnowledgeEditorProps) {
   const [edited, setEdited] = useState<Knowledge>(knowledge);
   const [showJson, setShowJson] = useState(false);
 
-  const handleCompanyNameChange = (name: string) => {
-    setEdited({ ...edited, companyName: name });
-  };
-
-  const handleFoundationChange = (field: string, value: string | number | undefined) => {
+  const handleFoundationChange = (field: string, value: string) => {
     setEdited({
       ...edited,
       foundation: {
@@ -43,151 +53,115 @@ export default function KnowledgeEditor({
   };
 
   const handleSave = () => {
-    edited.updatedAt = new Date().toISOString();
-    onSave(edited);
-  };
-
-  const handleDownload = () => {
-    downloadJSON(edited);
+    onSave({ ...edited, updatedAt: new Date().toISOString() });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Edit Knowledge Base</h2>
+    <Card className="animate-fade-up overflow-hidden">
+      <div className="flex flex-col gap-4 border-b border-line px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-ink">Edit knowledge base</h2>
+          <p className="text-sm text-muted">Correct anything the scraper got wrong before saving.</p>
+        </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => setShowJson(!showJson)}
-            className="text-blue-600 px-3 py-2 rounded hover:bg-blue-50 transition"
-          >
-            {showJson ? "Hide" : "Show"} JSON
+          <button type="button" onClick={() => setShowJson(!showJson)} className={button.subtle}>
+            {showJson ? "Hide JSON" : "Preview JSON"}
           </button>
-          <button
-            onClick={handleDownload}
-            className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition"
-          >
+          <button type="button" onClick={() => downloadJSON(edited)} className={button.subtle}>
             Download JSON
           </button>
         </div>
       </div>
 
       {showJson && (
-        <div className="mb-6 bg-gray-100 rounded-lg p-4 max-h-96 overflow-y-auto">
-          <pre className="text-xs text-gray-800 whitespace-pre-wrap break-words">
-            {JSON.stringify(edited, null, 2)}
-          </pre>
-        </div>
+        <pre className="max-h-96 overflow-auto border-b border-line bg-navy-900 px-6 py-5 font-mono text-xs leading-relaxed text-brand-100">
+          {JSON.stringify(edited, null, 2)}
+        </pre>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        {/* Company Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Company Name
-          </label>
+      <div className="grid gap-6 p-6 md:grid-cols-2">
+        <div className="md:col-span-2">
+          <FieldLabel htmlFor="companyName">Company name</FieldLabel>
           <input
+            id="companyName"
             type="text"
             value={edited.companyName}
-            onChange={(e) => handleCompanyNameChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            onChange={(e) => setEdited({ ...edited, companyName: e.target.value })}
+            className={inputClass}
           />
         </div>
 
-        {/* Industry */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">
-              Industry
-            </label>
-            {edited.foundation.industryConfidence !== undefined && (
-              <span className={`text-xs px-2 py-0.5 rounded ${
-                edited.foundation.industryConfidence >= 0.75
-                  ? "bg-green-100 text-green-700"
-                  : edited.foundation.industryConfidence >= 0.5
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-gray-100 text-gray-700"
-              }`}>
-                {Math.round(edited.foundation.industryConfidence * 100)}% confidence
-              </span>
-            )}
-          </div>
+          <FieldLabel
+            htmlFor="industry"
+            badge={
+              edited.foundation.industryConfidence !== undefined && (
+                <ConfidenceBadge value={edited.foundation.industryConfidence} label="detected" />
+              )
+            }
+          >
+            Industry
+          </FieldLabel>
           <input
+            id="industry"
             type="text"
             value={edited.foundation.industry}
             onChange={(e) => handleFoundationChange("industry", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className={inputClass}
           />
         </div>
 
-        {/* Business Model */}
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-gray-700">
-              Business Model
-            </label>
-            {edited.foundation.businessModelConfidence !== undefined && (
-              <span className={`text-xs px-2 py-0.5 rounded ${
-                edited.foundation.businessModelConfidence >= 0.75
-                  ? "bg-green-100 text-green-700"
-                  : edited.foundation.businessModelConfidence >= 0.5
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-gray-100 text-gray-700"
-              }`}>
-                {Math.round(edited.foundation.businessModelConfidence * 100)}% confidence
-              </span>
-            )}
-          </div>
+          <FieldLabel
+            htmlFor="businessModel"
+            badge={
+              edited.foundation.businessModelConfidence !== undefined && (
+                <ConfidenceBadge value={edited.foundation.businessModelConfidence} label="detected" />
+              )
+            }
+          >
+            Business model
+          </FieldLabel>
           <input
+            id="businessModel"
             type="text"
             value={edited.foundation.businessModel}
             onChange={(e) => handleFoundationChange("businessModel", e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className={inputClass}
           />
         </div>
 
+        <div className="md:col-span-2">
+          <FieldLabel htmlFor="overview">Company overview</FieldLabel>
+          <textarea
+            id="overview"
+            value={edited.foundation.overview}
+            onChange={(e) => handleFoundationChange("overview", e.target.value)}
+            rows={3}
+            className={inputClass}
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <FieldLabel htmlFor="pitch">Company pitch</FieldLabel>
+          <textarea
+            id="pitch"
+            value={edited.positioning.pitch || ""}
+            onChange={(e) => handlePitchChange(e.target.value)}
+            rows={4}
+            className={inputClass}
+          />
+        </div>
       </div>
 
-      {/* Overview */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Company Overview
-        </label>
-        <textarea
-          value={edited.foundation.overview}
-          onChange={(e) => handleFoundationChange("overview", e.target.value)}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
-      </div>
-
-      {/* Pitch */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Company Pitch
-        </label>
-        <textarea
-          value={edited.positioning.pitch || ""}
-          onChange={(e) => handlePitchChange(e.target.value)}
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-        />
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex gap-3 justify-end">
-        <button
-          onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-        >
+      <div className="flex justify-end gap-2 border-t border-line bg-surface/60 px-6 py-4">
+        <button type="button" onClick={onCancel} className={button.subtle}>
           Cancel
         </button>
-        <button
-          onClick={handleSave}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-        >
-          Save to Knowledge Base
+        <button type="button" onClick={handleSave} className={button.primary}>
+          {saveLabel}
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
