@@ -1,209 +1,55 @@
-# MoKnowledge - Assignment Questions Answered
+# MoKnowledge: Answers to the Required Questions
 
 ## 1. What approach did you take to scraping and structuring the knowledge base data?
 
-### Scraping Approach
+I built a rule-based scraper in four steps: **fetch, extract, classify, assemble**.
 
-The scraper uses a **multi-signal extraction strategy** rather than a single LLM-based approach:
+- **Fetch.** A Next.js API route downloads pages on the server, since browsers block cross-site requests. I read the homepage, then follow its links to up to five pages that usually hold the important details: About, Services, Contact, Team, FAQ, and Reviews. Reading only the homepage missed most of the address, staff, and story information.
+- **Extract.** Each page is parsed once, and small functions each pull one kind of data: contact info, offerings, people, testimonials, brand colors, and so on. The most reliable source turned out to be schema.org structured data, which many small-business sites already include for Google. It gives clean address, phone, founding date, FAQs, and reviews.
+- **Classify.** Industry and business model are chosen by counting keyword matches, with the title, description, headings, and CTA buttons weighted higher. The confidence score reflects how clearly one category won.
+- **Assemble.** Everything goes into one typed `Knowledge` object that follows the assignment's categories.
 
-1. **Metadata Extraction** - Pull HTML title, og:description, og:image from meta tags
-2. **Social Media Detection** - Regex and link parsing for LinkedIn, Facebook, Twitter, Instagram, YouTube, TikTok
-3. **Image Extraction** - Find logos by filtering image alt text for "logo" keyword
-4. **Color Parsing** - Extract hex colors from CSS stylesheets
-5. **Content Analysis** - Text parsing for company themes and unique value propositions
-6. **Contact Info** - Regex for phone numbers and email addresses
+I also tag **where every value came from**: read from the site, derived by a rule, a mock AI placeholder, or edited by a person. When a knowledge base feeds AI content generation, knowing which facts are verified matters as much as the facts themselves.
 
-### Data Structuring
+## 2. What information beyond the baseline did you include, and why?
 
-The knowledge base follows a **hierarchical, nested structure** that mirrors how a human would organize company information:
+I picked additions that make generated content more specific and believable:
 
-```
-Knowledge Base
-├── Foundation (company basics)
-├── Positioning (why choose them)
-├── Market & Customers (who they serve)
-├── Branding & Style (how they communicate)
-├── Online Presence (where to find them)
-├── Key People (who leads them)
-├── Offerings (what they sell)
-└── Think Bigger (themes, USPs)
-```
+- **Content themes.** Repeated two-word phrases like "water well" or "craft beer". These tell MoBlogs and MoSocial what the business actually talks about.
+- **Key headlines and CTAs.** The site's own headlines and button text ("Request Estimate", "Book a Private Event"), so generated content uses the same calls to action.
+- **Unique selling points and trust signals.** "Since 1980", "licensed and insured", warranties. These are proof points for emails and posts.
+- **Testimonials, rating, and FAQs.** Real customer language, and the questions customers actually ask. FAQs become blog topics.
+- **Writing style and art style, measured rather than guessed.** Average sentence length, "you" vs "we" voice, palette mood, serif vs sans-serif fonts, how photo-heavy the site is. This keeps generated text and images on-brand.
+- **Funnels and channels.** Quote request, booking, phone, newsletter, so each app knows which conversion action to push.
+- **Provenance and completeness.** Where each value came from and how complete the record is, so apps can avoid repeating unverified claims.
 
-### Why This Structure
+## 3. How would this improve MoSocial, MoMail, and MoBlogs?
 
-This mirrors how the downstream applications need to consume data:
-- **MoSocial** needs themes and USPs for social post generation
-- **MoMail** needs customer personas and CTAs for email sequences
-- **MoBlogs** needs industry context and founding stories for long-form content
+- **MoSocial:** writes about the company's real themes and proof points instead of generic industry filler, and links to the right social profiles. Colors, fonts, and art style guide the images.
+  *Example:* Bee Cave Drilling posts can mention "serving the Texas Hill Country since 1980" and use their actual services (well drilling, permitting, water well service).
+- **MoMail:** knows the audience and the main conversion action (e.g. "Request Estimate"), so emails end with the CTA the business actually uses. Testimonials work as social proof, and the measured writing style keeps the tone consistent.
+- **MoBlogs:** turns FAQs, offerings, and the founding story into articles.
+  *Example:* Bee Cave's story (started in 1980 in the back room of the founders' house) is a ready-made "About us" post. Vista Brewing's FAQs ("Is Vista dog-friendly?") are ready-made blog topics.
 
-## 2. What information beyond the baseline did you choose to include, and why?
+Because every field is tagged with its source, all three apps can repeat stated facts confidently and treat inferred ones more carefully.
 
-### Prioritized "Think Bigger" Additions
+## 4. What would you improve with more time?
 
-**1. Content Themes & Topics**
-- **What:** Extracted keywords and recurring topics from website text
-- **Why:** Helps generate on-brand content. If a company constantly talks about "automation" and "efficiency," those themes should echo in social posts and emails. Without this, generated content could miss the mark.
-- **Use Case:** MoSocial uses themes to suggest hashtags. MoMail uses them to write subject lines that resonate.
+1. **Real AI enrichment.** Use Prompt 0 in `prompts/EXAMPLE_PROMPTS.md` to fill the gaps rules can't, with an evidence quote for every value, and replace the mock placeholders.
+2. **A database.** Move from browser storage to the Supabase design in `docs/DATABASE_SCHEMA.md`: accounts, version history, rollback.
+3. **JavaScript-rendered sites.** Use a headless browser for sites that build their content after loading.
+4. **More sources.** Google Business Profile, review sites, and social accounts.
+5. **Accuracy testing.** A set of known websites with expected values, to measure extraction accuracy and catch regressions when rules change.
+6. **Background scraping** with retries and rate limits, so big batches don't block the page.
 
-**2. Unique Selling Propositions (USPs)**
-- **What:** Extracted competitive differentiators and key benefits from positioning language
-- **Why:** Critical for compelling content. Knowing "we're the only vendor with X technology" or "we offer 24-hour support" is essential for persuasive writing. Baseline data alone doesn't surface these.
-- **Use Case:** MoBlogs features USPs prominently in case studies. MoSocial emphasizes them in value propositions.
+## 5. What was the most challenging part?
 
-### Why Not Others?
+**Telling real business information apart from everything else on a web page.**
 
-- **Testimonials/Reviews:** Requires deeper crawling (often on separate pages), and quality varies widely
-- **Certifications:** Useful but not universally present, harder to extract reliably  
-- **FAQs:** Often JavaScript-rendered or paginated, outside current scope
-- **Media Mentions:** Requires external API calls or additional crawling
+Websites are full of text that isn't about the business: menus, cookie banners, hidden terms-of-service popups, code, and theme defaults. Early versions got fooled constantly:
+- Almost every site was labeled "Accounting & Tax" because the word "tax" appears inside WordPress code ("taxonomy").
+- A brewery's link was read as an X/Twitter profile because its domain ends in "x.com".
+- An accountant's site showed its *website vendor's* address and emails, which came from a hidden legal popup.
+- A drilling company's brand colors were actually WordPress's default color palette.
 
-## 3. How would your knowledge base design improve the outputs of MoSocial, MoMail, and MoBlogs specifically?
-
-### MoSocial Enhancement
-
-**Before:** Generic social posts from company name + basic info
-**After:**
-- Content Themes guide hashtag selection (#automation #efficiency)
-- USPs drive attention-grabbing claims ("Industry's only...")
-- Branding colors/fonts ensure visual consistency
-- CTAs from website matched to platform norms (LinkedIn vs TikTok)
-
-**Example:** For "Bee Cave Drilling," knowing USPs ("over 40 years," "transparent pricing," "family-owned") means social posts highlight longevity and trustworthiness, not just "we drill wells."
-
-### MoMail Enhancement
-
-**Before:** Template fills with company name and generic offer copy
-**After:**
-- Target buyers/personas inform segment selection
-- Customer needs drive value prop messaging
-- Offering categories enable product-focused email flows
-- Industry groupings suggest relevant use cases
-- Online presence links for social proof footer
-
-**Example:** Account-it Consulting can get segmented emails: one flow for "businesses nearing retirement," another for "startups." Each has tailored pain points and messaging.
-
-### MoBlogs Enhancement
-
-**Before:** Blog outline based on company type
-**After:**
-- Founding story becomes feature-length narrative
-- Industry groupings surface trend/comparison content
-- Key people enable expert roundtable or interview formats
-- Offerings with features become detailed service guides
-- Content themes suggest what readers actually search for
-
-**Example:** MoFlo knows to write about "how Account-it handles businesses in transition" (founding story + market focus) not generic "top accounting tips."
-
-## 4. What would you improve or change about MoKnowledge if you had more time?
-
-### Priority 1: Production-Ready Backend
-
-**Current:** localStorage only (session-based, 5-10MB limit)
-**Improvement:** 
-- Migrate to Supabase with PostgreSQL
-- Multi-user accounts and permissions
-- Version history and audit logs
-- Real-time sync across devices
-
-**Why:** Current MVP is great for demo but can't scale to thousands of customers.
-
-### Priority 2: LLM-Powered Enrichment
-
-**Current:** Rule-based extraction (themes, USPs)
-**Improvement:**
-- Call Claude API for structured extraction of complex fields
-- Generate pitch from raw content (currently just uses first 500 chars)
-- Classify industry/business model automatically
-- Summarize founding story if it exists
-
-**Why:** Would improve confidence scores and catch nuance humans miss.
-
-### Priority 3: Advanced Scraping
-
-**Current:** Single-pass HTML fetch
-**Improvement:**
-- JavaScript rendering for dynamic content
-- Multi-depth crawling (homepage + about + services pages)
-- Image/media extraction with sizing
-- Table and structured data (JSON-LD) parsing
-- Rate limiting and respectful crawling
-
-**Why:** Many modern sites heavily JS-rendered. Would catch 30-40% more data.
-
-### Priority 4: User Experience
-
-**Current:** Functional but utilitarian
-**Improvement:**
-- Drag-drop file uploader for bulk imports
-- Side-by-side comparison of versions
-- Field-level confidence indicators
-- Smart suggestions for missing data
-- Export templates for different use cases
-
-**Why:** Power users (account managers) would work 10x faster.
-
-### Priority 5: Integration
-
-**Current:** JSON export only
-**Improvement:**
-- Zapier/Make integration for workflow automation
-- API endpoints for programmatic access
-- Webhook events for downstream systems
-- CRM sync (HubSpot, Salesforce)
-
-**Why:** MoFlo uses this data across many systems—API access essential.
-
-## 5. What was the most challenging part of this assignment?
-
-### The Challenge: Knowing When To Stop (Scope Creep)
-
-The hardest part wasn't technical—it was **choosing what NOT to build.**
-
-**Why It Was Hard:**
-- The assignment explicitly says "think bigger," which invites over-engineering
-- There are 50+ signals you could extract from a website
-- Every missing feature felt like a shortcoming
-
-**Example Decisions:**
-- "Should I add testimonial extraction?" → Decided no (requires crawling multiple pages)
-- "Should I integrate OpenAI?" → Decided no (keeps it simple and explainable)
-- "Should I build a real database?" → Decided no (localStorage is sufficient for demo)
-- "Should I add full-page screenshot preview?" → Decided no (out of scope)
-
-### The Solution: "Explainability" as a Guiding Principle
-
-I used this as my north star:
-> "I need to explain every line of code to a technical interviewer."
-
-This meant:
-- ✅ Simple, readable code over clever optimizations
-- ✅ Separation of concerns (scraper ≠ UI ≠ state)
-- ✅ Meaningful "think bigger" features (themes, USPs) not exotic ones
-- ❌ No magic frameworks or premature abstractions
-- ❌ No trying to be a production app in a weekend
-
-### The Learning
-
-The most valuable insight: **Scope management is harder than implementation.** Any competent engineer can add features. The skill is knowing which features matter and which are distractions.
-
-For this assignment specifically, it meant:
-1. Build the core scraping + UI (non-negotiable)
-2. Add the two most impactful "think bigger" features
-3. Document HOW you'd scale it (Supabase, LLM, crawling)
-4. Explain the tradeoffs clearly
-
-This shows product thinking (prioritization) not just coding ability.
-
----
-
-## Bonus: Known Tradeoffs
-
-| Aspect | Current | Why | Future |
-|--------|---------|-----|--------|
-| **Persistence** | localStorage | Works for MVP, explainable | Supabase + API |
-| **Content Rendering** | Static HTML only | Fast, reliable, works 90% of time | Headless browser |
-| **Data Enrichment** | Rule-based (regex, heuristics) | Transparent & fast | LLM-powered |
-| **Scraping Scope** | Single page | Simpler, cleaner extraction | Multi-page crawl |
-| **User Scale** | Single device | localStorage is per-browser | Multi-tenant auth |
-
-Each tradeoff was deliberate and defensible based on assignment goals (explainability + demo quality).
+The fix was to strip out non-content parts first, match whole words only, and check results against several real sites after each change. The other challenge was being honest about uncertainty. Rather than filling every field with a guess, the app leaves fields empty when nothing was found, and labels anything that's derived or a mock AI placeholder.

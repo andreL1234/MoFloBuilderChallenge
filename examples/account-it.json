@@ -1,0 +1,141 @@
+{
+  "id": "kb_1791874740933_4h6p0kwhh",
+  "sourceUrl": "account-it.net",
+  "companyName": "Account-it Consulting Services, LLC",
+  "foundation": {
+    "overview": "Account-it Consulting Services, LLC will take care of your tax preparation and planning needs so you can focus on life in beautiful Boynton Beach.",
+    "website": "https://account-it.net/",
+    "industry": "Accounting & Tax",
+    "businessModel": "Appointment-Based Services",
+    "companyRole": "Appointment-based provider",
+    "industryConfidence": 0.74,
+    "businessModelConfidence": 0.95,
+    "yearFounded": 2003,
+    "legalEntityType": "LLC",
+    "mainAddress": "Boynton Beach, Florida 33437",
+    "otherLocations": [],
+    "serviceLocations": [],
+    "alternativeNames": []
+  },
+  "positioning": {
+    "pitch": "Account-it Consulting Services, LLC will take care of your tax preparation and planning needs so you can focus on life in beautiful Boynton Beach."
+  },
+  "marketAndCustomers": {
+    "targetBuyers": [
+      "Local consumers"
+    ],
+    "customerNeeds": [
+      "Dependable help with maximizing returns",
+      "Dependable help with minimizing stress",
+      "Fast, clear communication"
+    ],
+    "idealPersona": "Local consumers who need maximizing returns and minimizing stress and choose Account-it Consulting Services, LLC for a trusted, accounting & tax specialist they can rely on.",
+    "industryGroupings": [
+      "Accounting & Tax",
+      "Consulting"
+    ],
+    "channels": [
+      "Website",
+      "Phone",
+      "Email",
+      "Facebook",
+      "Linkedin"
+    ],
+    "funnels": [
+      "Quote request",
+      "Booking / appointment",
+      "Contact form",
+      "Phone call"
+    ],
+    "ctas": [
+      "Schedule Appointment",
+      "Contact",
+      "Get started"
+    ],
+    "suppliers": []
+  },
+  "brandingAndStyle": {
+    "writingStyle": "Clear, medium-length sentences; speaks directly to the reader (“you”); personal first-person voice (“we”). Avg 20 words per sentence.",
+    "artStyle": "Balanced cool-toned palette, clean sans-serif typography (Inter), moderate use of photography.",
+    "fonts": [
+      "Inter",
+      "Abril Fatface",
+      "Bebas Neue",
+      "Fira Sans"
+    ],
+    "colors": [
+      "#1F2937",
+      "#2299DD",
+      "#2E3084",
+      "#00AEEF",
+      "#898989",
+      "#2E2E2E"
+    ],
+    "logos": [
+      "https://cw3prd.s3.us-west-1.amazonaws.com/2334180/account-logo.png",
+      "https://cw3prd.s3.us-west-1.amazonaws.com/2334190/conversions/account-it-fav-favicon.png"
+    ]
+  },
+  "onlinePresence": {
+    "facebook": "https://www.facebook.com/account.itconsulting/?ref=settings",
+    "linkedin": "https://www.linkedin.com/in/doug-cohen-9121a86/",
+    "other": {
+      "phone": "(954) 592-8630",
+      "email": "dougc@account-it.net"
+    }
+  },
+  "keyPeople": [
+    {
+      "name": "Doug Cohen",
+      "title": "CPA",
+      "role": "Team member"
+    }
+  ],
+  "offerings": [],
+  "thinkBigger": {
+    "contentThemes": [
+      "maximizing returns",
+      "minimizing stress",
+      "top rated",
+      "rated tax",
+      "tax partner",
+      "latest articles",
+      "schedule appointment",
+      "count visits"
+    ],
+    "uniqueSellingPropositions": [],
+    "messagingHeadlines": [
+      "Maximizing returns,",
+      "minimizing stress: Your top-rated tax partner!",
+      "Welcome To Account-it Consulting Services, LLC",
+      "See why our clients love us!",
+      "Start A Conversation With Account-it Consulting Services, LLC"
+    ],
+    "testimonials": [],
+    "certifications": [],
+    "faqs": [],
+    "mediaCovers": []
+  },
+  "scrapedAt": "2026-10-13T06:59:00.933Z",
+  "updatedAt": "2026-10-13T06:59:00.933Z",
+  "provenance": {
+    "foundation.companyRole": "derived",
+    "foundation.industry": "derived",
+    "foundation.businessModel": "derived",
+    "marketAndCustomers.industryGroupings": "derived",
+    "marketAndCustomers.channels": "derived",
+    "marketAndCustomers.funnels": "derived",
+    "marketAndCustomers.targetBuyers": "derived",
+    "brandingAndStyle.writingStyle": "derived",
+    "brandingAndStyle.artStyle": "derived",
+    "marketAndCustomers.customerNeeds": "mock-ai",
+    "marketAndCustomers.idealPersona": "mock-ai"
+  },
+  "pagesScraped": [
+    "https://account-it.net/",
+    "https://account-it.net/about-us/doug-cohen",
+    "https://account-it.net/services",
+    "https://account-it.net/contact"
+  ],
+  "confidenceScore": 0.68
+}

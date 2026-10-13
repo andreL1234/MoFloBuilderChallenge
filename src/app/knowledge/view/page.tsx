@@ -1,47 +1,42 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useKnowledge } from "@/context/KnowledgeContext";
 import KnowledgeList from "@/components/KnowledgeList";
-import { Knowledge } from "@/types/knowledge";
+import { button, Card } from "@/components/ui";
 
 export default function ViewPage() {
-  const router = useRouter();
-  const { knowledgeList, deleteKnowledge, setCurrentKnowledge, duplicateKnowledge, addKnowledge } = useKnowledge();
-
-  const handleEdit = (knowledge: Knowledge) => {
-    setCurrentKnowledge(knowledge);
-    router.push("/knowledge");
-  };
-
-  const handleDelete = (id: string) => {
-    deleteKnowledge(id);
-  };
-
-  const handleDuplicate = (id: string) => {
-    duplicateKnowledge(id);
-  };
-
-  const handleImport = (knowledge: Knowledge) => {
-    addKnowledge(knowledge);
-  };
+  const { knowledgeList, isHydrated, deleteKnowledge, duplicateKnowledge, addKnowledge } = useKnowledge();
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Knowledge Bases</h1>
-        <p className="text-gray-600">
-          View, manage, and edit all saved knowledge bases
-        </p>
-      </div>
+    <>
+      <section className="hero-bg px-4 pt-32 pb-24 sm:pt-36">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-white/80">Library</p>
+            <h1 className="mt-2 text-4xl font-semibold tracking-tight text-white sm:text-5xl">Knowledge bases</h1>
+            <p className="mt-3 max-w-xl text-white/80">
+              Every company you&apos;ve scraped. Search, filter, export, or open one to see its full profile.
+            </p>
+          </div>
+          <Link href="/knowledge" className={button.dark}>
+            New scrape
+          </Link>
+        </div>
+      </section>
 
-      <KnowledgeList
-        knowledgeList={knowledgeList}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onDuplicate={handleDuplicate}
-        onImport={handleImport}
-      />
-    </div>
+      <div className="relative z-10 mx-auto -mt-12 max-w-6xl px-4 pb-24">
+        {isHydrated ? (
+          <KnowledgeList
+            knowledgeList={knowledgeList}
+            onDelete={deleteKnowledge}
+            onDuplicate={duplicateKnowledge}
+            onImport={addKnowledge}
+          />
+        ) : (
+          <Card className="h-40 animate-pulse" />
+        )}
+      </div>
+    </>
   );
 }

@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
 import { KnowledgeProvider } from "@/context/KnowledgeContext";
+import SiteNav from "@/components/SiteNav";
 import "./globals.css";
+
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "MoKnowledge - Company Knowledge Base Builder",
   description:
-    "Web-based tool to scrape company websites and build comprehensive knowledge bases",
+    "Scrape company websites and turn them into structured knowledge bases",
 };
 
 export default function RootLayout({
@@ -14,33 +23,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50">
+    // suppressHydrationWarning: browser extensions (e.g. Grammarly) inject attributes into <html>/<body>
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <KnowledgeProvider>
-          <nav className="bg-white border-b border-gray-200 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">MoKnowledge</h1>
-                <div className="flex gap-4">
-                  <a
-                    href="/knowledge"
-                    className="text-gray-700 hover:text-gray-900 font-medium"
-                  >
-                    Build
-                  </a>
-                  <a
-                    href="/knowledge/view"
-                    className="text-gray-700 hover:text-gray-900 font-medium"
-                  >
-                    View
-                  </a>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </main>
+          <SiteNav />
+          <main className="min-h-screen">{children}</main>
         </KnowledgeProvider>
       </body>
     </html>

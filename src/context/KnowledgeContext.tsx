@@ -4,15 +4,14 @@ import React, { createContext, useContext, useState, useEffect, useRef } from "r
 import { Knowledge } from "@/types/knowledge";
 
 interface KnowledgeContextType {
-  currentKnowledge: Knowledge | null;
   knowledgeList: Knowledge[];
+  isHydrated: boolean;
   isLoading: boolean;
   error: string | null;
-  setCurrentKnowledge: (knowledge: Knowledge | null) => void;
   addKnowledge: (knowledge: Knowledge) => void;
   updateKnowledge: (knowledge: Knowledge) => void;
   deleteKnowledge: (id: string) => void;
-  duplicateKnowledge: (id: string) => void;
+  duplicateKnowledge: (id: string) => Knowledge | null;
   setError: (error: string | null) => void;
   setIsLoading: (loading: boolean) => void;
 }
@@ -26,9 +25,6 @@ export function KnowledgeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currentKnowledge, setCurrentKnowledge] = useState<Knowledge | null>(
-    null
-  );
   const [knowledgeList, setKnowledgeList] = useState<Knowledge[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,7 +74,6 @@ export function KnowledgeProvider({
       console.log("Knowledge list after add:", updated);
       return updated;
     });
-    setCurrentKnowledge(null);
   };
 
   const updateKnowledge = (knowledge: Knowledge) => {
@@ -88,19 +83,15 @@ export function KnowledgeProvider({
       console.log("Knowledge list after update:", updated);
       return updated;
     });
-    setCurrentKnowledge(null);
   };
 
   const deleteKnowledge = (id: string) => {
     setKnowledgeList((prev) => prev.filter((k) => k.id !== id));
-    if (currentKnowledge?.id === id) {
-      setCurrentKnowledge(null);
-    }
   };
 
-  const duplicateKnowledge = (id: string) => {
+  const duplicateKnowledge = (id: string): Knowledge | null => {
     const existing = knowledgeList.find((k) => k.id === id);
-    if (!existing) return;
+    if (!existing) return null;
 
     const now = new Date().toISOString();
     const newId = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -114,17 +105,16 @@ export function KnowledgeProvider({
     };
 
     addKnowledge(duplicate);
-    setCurrentKnowledge(duplicate);
+    return duplicate;
   };
 
   return (
     <KnowledgeContext.Provider
       value={{
-        currentKnowledge,
         knowledgeList,
+        isHydrated,
         isLoading,
         error,
-        setCurrentKnowledge,
         addKnowledge,
         updateKnowledge,
         deleteKnowledge,

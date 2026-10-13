@@ -1,34 +1,67 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { Knowledge } from "@/types/knowledge";
 import { downloadJSON, downloadCSV, importJSON } from "@/utils/storage";
+import { hostnameOf } from "@/utils/url";
+import {
+  button,
+  Card,
+  Chip,
+  ConfidenceBadge,
+  ConfidenceMeter,
+  inputClass,
+  LogoMark,
+  normalizeConfidence,
+} from "@/components/ui";
 
 interface KnowledgeListProps {
   knowledgeList: Knowledge[];
-  onEdit: (knowledge: Knowledge) => void;
   onDelete: (id: string) => void;
-  onDuplicate?: (id: string) => void;
-  onImport?: (knowledge: Knowledge) => void;
+  onDuplicate: (id: string) => void;
+  onImport: (knowledge: Knowledge) => void;
 }
 
-type ViewMode = "cards" | "table" | "detail";
+type ViewMode = "cards" | "table";
 type SortBy = "name" | "date" | "industry" | "confidence";
 
-export default function KnowledgeList({
-  knowledgeList,
-  onEdit,
-  onDelete,
-  onDuplicate,
-  onImport,
-}: KnowledgeListProps) {
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+
+function ColorStrip({ colors = [] }: { colors?: string[] }) {
+  if (colors.length === 0) return <div className="h-1.5 bg-linear-to-r from-brand-500 to-brand-700" />;
+  return (
+    <div className="flex h-1.5">
+      {colors.slice(0, 6).map((color, i) => (
+        <div key={i} className="flex-1" style={{ backgroundColor: color }} />
+      ))}
+    </div>
+  );
+}
+
+export default function KnowledgeList({ knowledgeList, onDelete, onDuplicate, onImport }: KnowledgeListProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<ViewMode>("cards");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortBy>("date");
   const [filterIndustry, setFilterIndustry] = useState<string>("");
   const [filterModel, setFilterModel] = useState<string>("");
   const [minConfidence, setMinConfidence] = useState<number>(0);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    if (!notice) return;
+    const timer = setTimeout(() => setNotice(null), 4000);
+    return () => clearTimeout(timer);
+  }, [notice]);
+
+  // Delete needs a second click within 3 seconds
+  useEffect(() => {
+    if (!pendingDeleteId) return;
+    const timer = setTimeout(() => setPendingDeleteId(null), 3000);
+    return () => clearTimeout(timer);
+  }, [pendingDeleteId]);
 
   const industries = useMemo(
     () => [...new Set(knowledgeList.map((k) => k.foundation.industry))].sort(),
@@ -41,15 +74,13 @@ export default function KnowledgeList({
   );
 
   const filtered = useMemo(() => {
-    let result = knowledgeList.filter((k) => {
+    const term = searchTerm.toLowerCase();
+    const result = knowledgeList.filter((k) => {
       const matchesSearch =
-        k.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        k.foundation.industry.toLowerCase().includes(searchTerm.toLowerCase());
-
+        k.companyName.toLowerCase().includes(term) || k.foundation.industry.toLowerCase().includes(term);
       const matchesIndustry = !filterIndustry || k.foundation.industry === filterIndustry;
       const matchesModel = !filterModel || k.foundation.businessModel === filterModel;
-      const matchesConfidence = (k.confidenceScore || 0) >= minConfidence / 100;
-
+      const matchesConfidence = normalizeConfidence(k.confidenceScore) >= minConfidence / 100;
       return matchesSearch && matchesIndustry && matchesModel && matchesConfidence;
     });
 
@@ -62,7 +93,7 @@ export default function KnowledgeList({
         case "industry":
           return a.foundation.industry.localeCompare(b.foundation.industry);
         case "confidence":
-          return (b.confidenceScore || 0) - (a.confidenceScore || 0);
+          return normalizeConfidence(b.confidenceScore) - normalizeConfidence(a.confidenceScore);
         default:
           return 0;
       }
@@ -71,12 +102,21 @@ export default function KnowledgeList({
     return result;
   }, [knowledgeList, searchTerm, sortBy, filterIndustry, filterModel, minConfidence]);
 
-  const selectedKnowledge = filtered.find((k) => k.id === selectedId);
+  const hasActiveFilters = searchTerm || filterIndustry || filterModel || minConfidence > 0;
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setFilterIndustry("");
+    setFilterModel("");
+    setMinConfidence(0);
+  };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this knowledge base?")) {
+    if (pendingDeleteId === id) {
       onDelete(id);
-      setSelectedId(null);
+      setPendingDeleteId(null);
+    } else {
+      setPendingDeleteId(id);
     }
   };
 
@@ -86,14 +126,12 @@ export default function KnowledgeList({
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const content = e.target?.result as string;
-      const imported = importJSON(content);
-
-      if (imported && onImport) {
+      const imported = importJSON(e.target?.result as string);
+      if (imported) {
         onImport(imported);
-        alert("Knowledge base imported successfully!");
+        setNotice({ tone: "success", text: `Imported ${imported.companyName}` });
       } else {
-        alert("Failed to import knowledge base. Invalid JSON format.");
+        setNotice({ tone: "error", text: "That file isn't a valid knowledge base JSON export." });
       }
     };
     reader.readAsText(file);
@@ -102,337 +140,251 @@ export default function KnowledgeList({
     event.target.value = "";
   };
 
+  const rowActions = (kb: Knowledge) => (
+    <div className="relative z-10 flex items-center gap-1">
+      {[
+        { label: "Export", onClick: () => downloadJSON(kb), className: "text-muted hover:text-ink hover:bg-surface" },
+        { label: "Duplicate", onClick: () => onDuplicate(kb.id), className: "text-muted hover:text-ink hover:bg-surface" },
+        {
+          label: pendingDeleteId === kb.id ? "Confirm delete" : "Delete",
+          onClick: () => handleDelete(kb.id),
+          className:
+            pendingDeleteId === kb.id ? "bg-red-600 text-white hover:bg-red-700" : "text-muted hover:text-red-600 hover:bg-red-50",
+        },
+      ].map((action) => (
+        <button
+          key={action.label}
+          type="button"
+          onClick={action.onClick}
+          className={`cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium transition ${action.className}`}
+        >
+          {action.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (knowledgeList.length === 0) {
+    return (
+      <Card className="flex flex-col items-center px-6 py-20 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 ring-1 ring-brand-100">
+          <svg className="h-6 w-6 text-brand-600" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24" aria-hidden>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h10" />
+          </svg>
+        </div>
+        <h3 className="mt-5 text-lg font-semibold text-ink">No knowledge bases yet</h3>
+        <p className="mt-2 max-w-sm text-sm text-muted">
+          Scrape a company website to create your first one, or import a JSON export.
+        </p>
+        <div className="mt-6 flex gap-2">
+          <label className={button.subtle}>
+            Import JSON
+            <input type="file" accept=".json" onChange={handleImport} className="hidden" />
+          </label>
+          <Link href="/knowledge" className={button.primary}>
+            Scrape a website
+          </Link>
+        </div>
+        {notice && <p className={`mt-4 text-sm ${notice.tone === "error" ? "text-red-600" : "text-success"}`}>{notice.text}</p>}
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Search and Controls */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex flex-col md:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Search by company name or industry..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-          <div className="flex gap-2">
-            {(["cards", "table", "detail"] as ViewMode[]).map((mode) => (
-              <button
-                key={mode}
-                onClick={() => setViewMode(mode)}
-                className={`px-4 py-2 rounded-lg font-medium transition ${
-                  viewMode === mode
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                }`}
-              >
-                {mode.charAt(0).toUpperCase() + mode.slice(1)}
-              </button>
-            ))}
+      <Card className="p-4 sm:p-5">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <svg className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search by company or industry"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`${inputClass} pl-10`}
+              aria-label="Search knowledge bases"
+            />
           </div>
-          <button
-            onClick={() => downloadCSV(filtered)}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
-          >
-            Export CSV
-          </button>
-          {onImport && (
-            <label className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium cursor-pointer">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex rounded-full bg-surface p-1 ring-1 ring-line">
+              {(["cards", "table"] as ViewMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setViewMode(mode)}
+                  aria-pressed={viewMode === mode}
+                  className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium capitalize transition ${
+                    viewMode === mode ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {mode}
+                </button>
+              ))}
+            </div>
+            <label className={button.subtle}>
               Import JSON
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleImport}
-                className="hidden"
-              />
+              <input type="file" accept=".json" onChange={handleImport} className="hidden" />
             </label>
-          )}
+            <button type="button" onClick={() => downloadCSV(filtered)} className={button.subtle}>
+              Export CSV
+            </button>
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sort By
-            </label>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as SortBy)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-            >
-              <option value="date">Recently Scraped</option>
-              <option value="name">Company Name</option>
+        <div className="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="text-xs font-medium text-muted">
+            Sort by
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortBy)} className={`${inputClass} mt-1.5`}>
+              <option value="date">Recently scraped</option>
+              <option value="name">Company name</option>
               <option value="industry">Industry</option>
-              <option value="confidence">Confidence Score</option>
+              <option value="confidence">Confidence</option>
             </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Industry
-            </label>
-            <select
-              value={filterIndustry}
-              onChange={(e) => setFilterIndustry(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-            >
-              <option value="">All Industries</option>
+          </label>
+          <label className="text-xs font-medium text-muted">
+            Industry
+            <select value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)} className={`${inputClass} mt-1.5`}>
+              <option value="">All industries</option>
               {industries.map((industry) => (
                 <option key={industry} value={industry}>
                   {industry}
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Business Model
-            </label>
-            <select
-              value={filterModel}
-              onChange={(e) => setFilterModel(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
-            >
-              <option value="">All Models</option>
+          </label>
+          <label className="text-xs font-medium text-muted">
+            Business model
+            <select value={filterModel} onChange={(e) => setFilterModel(e.target.value)} className={`${inputClass} mt-1.5`}>
+              <option value="">All models</option>
               {models.map((model) => (
                 <option key={model} value={model}>
                   {model}
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Min Confidence: {minConfidence}%
-            </label>
+          </label>
+          <label className="text-xs font-medium text-muted">
+            <span className="flex justify-between">
+              Minimum confidence <span className="text-ink tabular-nums">{minConfidence}%</span>
+            </span>
             <input
               type="range"
               min="0"
               max="100"
+              step="5"
               value={minConfidence}
               onChange={(e) => setMinConfidence(parseInt(e.target.value))}
-              className="w-full"
+              className="mt-4 w-full accent-brand-600"
             />
-          </div>
+          </label>
         </div>
+      </Card>
 
-        <p className="text-sm text-gray-600">
-          {filtered.length} knowledge base{filtered.length !== 1 ? "s" : ""} found
+      <div className="flex items-center justify-between text-sm">
+        <p className="text-muted">
+          Showing <span className="font-medium text-ink">{filtered.length}</span> of {knowledgeList.length}
         </p>
+        {notice && (
+          <p className={`font-medium ${notice.tone === "error" ? "text-red-600" : "text-success"}`} role="status">
+            {notice.text}
+          </p>
+        )}
+        {hasActiveFilters && !notice && (
+          <button type="button" onClick={clearFilters} className="cursor-pointer font-medium text-brand-600 hover:underline">
+            Clear filters
+          </button>
+        )}
       </div>
 
       {filtered.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-md p-12 text-center">
-          <p className="text-gray-500 text-lg mb-4">No knowledge bases found</p>
-          <a
-            href="/knowledge"
-            className="text-blue-600 hover:underline font-medium"
-          >
-            Start by creating one
-          </a>
-        </div>
+        <Card className="px-6 py-16 text-center">
+          <p className="font-medium text-ink">No knowledge bases match these filters</p>
+          <button type="button" onClick={clearFilters} className={`${button.subtle} mt-4`}>
+            Clear filters
+          </button>
+        </Card>
       ) : viewMode === "cards" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((kb) => (
-            <div
+            <Card
               key={kb.id}
-              className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition cursor-pointer"
-              onClick={() => setSelectedId(kb.id)}
+              className="group relative flex flex-col overflow-hidden transition hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-20px_rgba(6,39,117,0.35)]"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {kb.companyName}
-              </h3>
-              <p className="text-sm text-gray-600 mb-3">
-                {kb.foundation.industry}
-              </p>
-              <div className="flex gap-2 flex-wrap mb-4">
-                {kb.foundation.yearFounded && (
-                  <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                    {kb.foundation.yearFounded}
-                  </span>
-                )}
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                  {
-                    (() => {
-                      const score = kb.confidenceScore || 0;
-                      const normalized = typeof score === 'number' && score > 1 ? score / 100 : score;
-                      return `${(Math.max(0, Math.min(1, normalized)) * 100).toFixed(0)}% confidence`;
-                    })()
-                  }
-                </span>
+              <ColorStrip colors={kb.brandingAndStyle.colors} />
+              <div className="flex-1 p-5">
+                <div className="flex items-center gap-4">
+                  <LogoMark knowledge={kb} />
+                  <div className="min-w-0">
+                    {/* The ::after overlay makes the whole card clickable without nesting buttons in a link */}
+                    <Link
+                      href={`/knowledge/view/${kb.id}`}
+                      className="block truncate font-display font-semibold text-ink after:absolute after:inset-0 group-hover:text-brand-600"
+                    >
+                      {kb.companyName}
+                    </Link>
+                    <p className="truncate text-sm text-muted">{hostnameOf(kb.sourceUrl)}</p>
+                  </div>
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Chip tone="brand">{kb.foundation.industry}</Chip>
+                  <Chip>{kb.foundation.businessModel}</Chip>
+                  {kb.foundation.yearFounded && <Chip>Est. {kb.foundation.yearFounded}</Chip>}
+                </div>
+                <div className="mt-5">
+                  <p className="mb-1.5 text-xs text-muted">Completeness</p>
+                  <ConfidenceMeter value={kb.confidenceScore} />
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(kb);
-                  }}
-                  className="flex-1 text-sm px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition"
-                >
-                  View
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    downloadJSON(kb);
-                  }}
-                  className="flex-1 text-sm px-3 py-1 bg-gray-50 text-gray-600 rounded hover:bg-gray-100 transition"
-                >
-                  Export
-                </button>
-                {onDuplicate && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDuplicate(kb.id);
-                    }}
-                    className="flex-1 text-sm px-3 py-1 bg-purple-50 text-purple-600 rounded hover:bg-purple-100 transition"
-                  >
-                    Duplicate
-                  </button>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(kb.id);
-                  }}
-                  className="flex-1 text-sm px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 transition"
-                >
-                  Delete
-                </button>
+              <div className="flex items-center justify-between border-t border-line px-5 py-3">
+                <span className="text-xs text-muted">{formatDate(kb.scrapedAt)}</span>
+                {rowActions(kb)}
               </div>
-            </div>
+            </Card>
           ))}
         </div>
-      ) : viewMode === "table" ? (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-100 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-6 py-3 font-semibold text-gray-900">Company</th>
-                <th className="text-left px-6 py-3 font-semibold text-gray-900">Industry</th>
-                <th className="text-left px-6 py-3 font-semibold text-gray-900">Founded</th>
-                <th className="text-left px-6 py-3 font-semibold text-gray-900">Confidence</th>
-                <th className="text-right px-6 py-3 font-semibold text-gray-900">Actions</th>
+      ) : (
+        <Card className="overflow-x-auto">
+          <table className="w-full min-w-[760px] text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-xs font-medium tracking-wide text-muted uppercase">
+                <th className="px-5 py-3 font-medium">Company</th>
+                <th className="px-5 py-3 font-medium">Industry</th>
+                <th className="px-5 py-3 font-medium">Business model</th>
+                <th className="px-5 py-3 font-medium">Confidence</th>
+                <th className="px-5 py-3 font-medium">Scraped</th>
+                <th className="px-5 py-3" />
               </tr>
             </thead>
-            <tbody>
-              {filtered.map((kb, i) => (
-                <tr
-                  key={kb.id}
-                  className={`border-b border-gray-200 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"}`}
-                >
-                  <td className="px-6 py-3 font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                    onClick={() => setSelectedId(kb.id)}>
-                    {kb.companyName}
-                  </td>
-                  <td className="px-6 py-3 text-gray-700">{kb.foundation.industry}</td>
-                  <td className="px-6 py-3 text-gray-700">{kb.foundation.yearFounded || "-"}</td>
-                  <td className="px-6 py-3">
-                    <span className="bg-blue-100 text-blue-700 text-sm px-2 py-1 rounded">
-                      {
-                        (() => {
-                          const score = kb.confidenceScore || 0;
-                          const normalized = typeof score === 'number' && score > 1 ? score / 100 : score;
-                          return `${(Math.max(0, Math.min(1, normalized)) * 100).toFixed(0)}%`;
-                        })()
-                      }
-                    </span>
-                  </td>
-                  <td className="px-6 py-3 text-right">
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => onEdit(kb)}
-                        className="text-blue-600 hover:underline text-sm font-medium"
-                      >
-                        View
-                      </button>
-                      <button
-                        onClick={() => downloadJSON(kb)}
-                        className="text-gray-600 hover:underline text-sm font-medium"
-                      >
-                        Export
-                      </button>
-                      {onDuplicate && (
-                        <button
-                          onClick={() => onDuplicate(kb.id)}
-                          className="text-purple-600 hover:underline text-sm font-medium"
-                        >
-                          Duplicate
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleDelete(kb.id)}
-                        className="text-red-600 hover:underline text-sm font-medium"
-                      >
-                        Delete
-                      </button>
+            <tbody className="divide-y divide-line">
+              {filtered.map((kb) => (
+                <tr key={kb.id} className="transition hover:bg-surface/70">
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-3">
+                      <LogoMark knowledge={kb} className="h-9 w-9 rounded-xl" />
+                      <div className="min-w-0">
+                        <Link href={`/knowledge/view/${kb.id}`} className="font-medium text-ink hover:text-brand-600">
+                          {kb.companyName}
+                        </Link>
+                        <p className="text-xs text-muted">{hostnameOf(kb.sourceUrl)}</p>
+                      </div>
                     </div>
+                  </td>
+                  <td className="px-5 py-3 text-ink">{kb.foundation.industry}</td>
+                  <td className="px-5 py-3 text-ink">{kb.foundation.businessModel}</td>
+                  <td className="px-5 py-3">
+                    <ConfidenceBadge value={kb.confidenceScore} />
+                  </td>
+                  <td className="px-5 py-3 text-muted">{formatDate(kb.scrapedAt)}</td>
+                  <td className="px-5 py-3">
+                    <div className="flex justify-end">{rowActions(kb)}</div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      ) : (
-        selectedKnowledge && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <button
-              onClick={() => setSelectedId(null)}
-              className="text-blue-600 hover:underline mb-4 text-sm"
-            >
-              ← Back to list
-            </button>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              {selectedKnowledge.companyName}
-            </h2>
-            <p className="text-gray-600 mb-4">{selectedKnowledge.foundation.industry}</p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 mb-2">Overview</h3>
-                <p className="text-gray-700 text-sm">{selectedKnowledge.foundation.overview}</p>
-              </div>
-
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 mb-2">Pitch</h3>
-                <p className="text-gray-700 text-sm line-clamp-4">
-                  {selectedKnowledge.positioning.pitch}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => onEdit(selectedKnowledge)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => downloadJSON(selectedKnowledge)}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
-              >
-                Download JSON
-              </button>
-              {onDuplicate && (
-                <button
-                  onClick={() => onDuplicate(selectedKnowledge.id)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
-                >
-                  Duplicate
-                </button>
-              )}
-              <button
-                onClick={() => handleDelete(selectedKnowledge.id)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        )
+        </Card>
       )}
     </div>
   );

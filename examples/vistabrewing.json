@@ -1,0 +1,165 @@
+{
+  "id": "kb_1791874744039_4jgp061xh",
+  "sourceUrl": "vistabrewingtx.com",
+  "companyName": "Vista Brewing",
+  "foundation": {
+    "overview": "Visit Vista Brewing in Driftwood, TX, a 21-acre destination with chef-driven food, award-winning craft beer, live music, and event spaces near Austin in the Texas Hill Country.",
+    "website": "https://www.vistabrewingtx.com/",
+    "industry": "Food & Beverage",
+    "businessModel": "Hospitality & Venue",
+    "companyRole": "Hospitality operator",
+    "industryConfidence": 0.7,
+    "businessModelConfidence": 0.93,
+    "mainAddress": "13551 Ranch to Market Road 150 Driftwood, TX, 78619 United States",
+    "otherLocations": [],
+    "serviceLocations": [
+      "Texas"
+    ],
+    "alternativeNames": []
+  },
+  "positioning": {
+    "pitch": "Visit Vista Brewing in Driftwood, TX, a 21-acre destination with chef-driven food, award-winning craft beer, live music, and event spaces near Austin in the Texas Hill Country.",
+    "foundingStory": "Co-Founders Karen and Kent Killough set their sights on building a destination where both locals and visitors can experience all the Texas Hill Country has to offer and fall in love with its rolling hills, beautiful trees & wildflowers and out-of-this-world sunsets. They created the Vista destination out of their mutual love for local craft culture, obsession with high quality and sustainably-produced food and drink, and passion for the beautiful Texas Hill Country."
+  },
+  "marketAndCustomers": {
+    "targetBuyers": [
+      "Local consumers"
+    ],
+    "customerNeeds": [
+      "Dependable help with abv",
+      "Dependable help with texas",
+      "A provider who reliably serves Texas"
+    ],
+    "idealPersona": "Local consumers in Texas who need abv and texas and choose Vista Brewing for a trusted, food & beverage specialist they can rely on.",
+    "industryGroupings": [
+      "Food & Beverage",
+      "Hospitality & Events"
+    ],
+    "channels": [
+      "Website",
+      "Phone",
+      "Email",
+      "Instagram",
+      "Facebook"
+    ],
+    "funnels": [
+      "Booking / appointment",
+      "Phone call"
+    ],
+    "ctas": [
+      "Contact",
+      "Book an Event or Reservation",
+      "Find Vista Beer",
+      "Book a Private Event",
+      "Visit",
+      "Join Email List"
+    ],
+    "suppliers": []
+  },
+  "brandingAndStyle": {
+    "writingStyle": "Long, detailed sentences; personal first-person voice (“we”); energetic, uses exclamation points; asks the reader questions. Avg 21 words per sentence.",
+    "artStyle": "Classic serif typography (Merriweather), moderate use of photography.",
+    "fonts": [
+      "Merriweather",
+      "Alatsi"
+    ],
+    "colors": [],
+    "logos": [
+      "https://images.squarespace-cdn.com/content/v1/624b27dc7e25e41666b0caa5/b363db7f-e694-4eb5-811a-afac95cba244/VistaWeb_Logo.png?format=1500w",
+      "https://images.squarespace-cdn.com/content/v1/624b27dc7e25e41666b0caa5/9fe73518-edc9-42a8-9785-3d799a6802eb/VistaLogo_Rough.png",
+      "https://images.squarespace-cdn.com/content/v1/624b27dc7e25e41666b0caa5/beeeb7d0-f90e-43b0-986e-c161ab35e0ea/favicon.ico?format=100w"
+    ]
+  },
+  "onlinePresence": {
+    "instagram": "https://instagram.com/vistabrewing",
+    "facebook": "https://www.facebook.com/vistabrewing",
+    "other": {
+      "phone": "(512) 766-1842",
+      "email": "howdy@vistabrewingtx.com, wholesale@vistabrewingtx.com, team@vistabrewingtx.com"
+    }
+  },
+  "keyPeople": [],
+  "offerings": [],
+  "thinkBigger": {
+    "contentThemes": [
+      "abv",
+      "texas",
+      "barrel aged",
+      "beer",
+      "hill country",
+      "pour",
+      "cans",
+      "live music"
+    ],
+    "uniqueSellingPropositions": [
+      "growing with integrity: low till, water conscious and focused on soil health"
+    ],
+    "messagingHeadlines": [
+      "Visit Us"
+    ],
+    "testimonials": [],
+    "certifications": [],
+    "faqs": [
+      {
+        "question": "Is Vista dog-friendly?",
+        "answer": "Yes! We welcome friendly dogs on leashes, and dogs are welcome inside the main Tasting Room & Restaurant."
+      },
+      {
+        "question": "Is Vista family-friendly?",
+        "answer": "Yes! Vista was built with families in mind. We have 21 acres of land to explore, including forts and lots of open space. There is a treehouse-style playscape, plus kid’s food & drink menus. There is a baby changing table in both the men’s and women’s restrooms."
+      },
+      {
+        "question": "Do I need to make a reservation?",
+        "answer": "For groups of 15 or less seating is first come, first served. We do take bookings for large groups, and can host private parties up to hundreds of guests with our full-service private event department. Get in touch with our event managers via the web form."
+      },
+      {
+        "question": "Do you serve drinks other than beer?",
+        "answer": "Yes! In addition to all Vista beer here at the brewery, we serve a curated list of Texas wines, many of whom we work with in our beer barrel aging program! We serve Texas cider and wine-based cocktails as well as non-alcoholic drinks."
+      },
+      {
+        "question": "When do you have live music?",
+        "answer": "Vista has grown to be a known Hill Country music venue with top talent from Central Texas and beyond. We typically have live music Fridays and Sundays. Please see our event calendar for the latest schedule."
+      },
+      {
+        "question": "Can I bring my own food?",
+        "answer": "Sorry, nope. Vista is a brewpub with a delicious food menu! We do allow outside celebration desserts with a $25 Dessert Fee, which includes plates, forks and napkins if needed."
+      },
+      {
+        "question": "Do you have WIFI?",
+        "answer": "Yes! We offer guest WIFI."
+      },
+      {
+        "question": "How about parking?",
+        "answer": "Parking at the Vista Ranch is ample & free! During busy times, please follow the signage to the back pasture when the front lot is full. It’s a short & beautiful walk to the buildings!"
+      },
+      {
+        "question": "How can I find out about events & happenings?",
+        "answer": "Vista often hosts fun events such as music festivals, educational & community events, movies, and more! The best way to stay in the know if to sign up for our email list and follow us on social media. Check out the Event Calendar on our website."
+      }
+    ],
+    "mediaCovers": []
+  },
+  "scrapedAt": "2026-10-13T06:59:04.039Z",
+  "updatedAt": "2026-10-13T06:59:04.039Z",
+  "provenance": {
+    "foundation.companyRole": "derived",
+    "foundation.industry": "derived",
+    "foundation.businessModel": "derived",
+    "marketAndCustomers.industryGroupings": "derived",
+    "marketAndCustomers.channels": "derived",
+    "marketAndCustomers.funnels": "derived",
+    "marketAndCustomers.targetBuyers": "derived",
+    "brandingAndStyle.writingStyle": "derived",
+    "brandingAndStyle.artStyle": "derived",
+    "marketAndCustomers.customerNeeds": "mock-ai",
+    "marketAndCustomers.idealPersona": "mock-ai"
+  },
+  "pagesScraped": [
+    "https://www.vistabrewingtx.com/",
+    "https://www.vistabrewingtx.com/about",
+    "https://www.vistabrewingtx.com/beer",
+    "https://www.vistabrewingtx.com/driftwood",
+    "https://www.vistabrewingtx.com/team"
+  ],
+  "confidenceScore": 0.59
+}
